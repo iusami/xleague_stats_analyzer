@@ -11,7 +11,6 @@ from utils import load_config_from_file, load_team_names_from_file, open_pdf
 @click.argument("pdf_path", type=Path)
 @click.option("--config", type=Path, default="config.json")
 def main(pdf_path: Path, config: Path):
-    
     config = load_config_from_file("config.json")
     team_names_list = load_team_names_from_file("teams.json")
     pdf_document = open_pdf(pdf_path)
