@@ -94,16 +94,11 @@ def get_yards(
             # チーム名が見つかったら、その後の記録をそのチームのものとして処理
             if unit.split(" ")[0] in team_list_in_file:
                 if unit.split(" ")[0] == team_list_in_file[0]:
-                    print("team_a")
                     team_mode = 0
                     team_a_count += 1
-                    print(f"team_mode_in_a: {team_mode}")
                 else:
-                    print("team_b")
                     team_mode = 1
                     team_b_count += 1
-                    print(f"team_mode_in_b: {team_mode}")
-            print(team_mode)
             matches = search_format.findall(unit)
             if matches:
                 extracted_text_dict_list[team_mode]["texts"].append(
