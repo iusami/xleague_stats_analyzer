@@ -9,7 +9,7 @@ ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
 
 # フォーマッターの設定
-formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s')
+formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
 ch.setFormatter(formatter)
 
 # ハンドラーをロガーに追加
