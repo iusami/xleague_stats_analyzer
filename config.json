@@ -1,0 +1,4 @@
+{
+    "run_long_gain_threshold": 15,
+    "pass_long_gain_threshold": 20
+}

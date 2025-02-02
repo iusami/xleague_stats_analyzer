@@ -1,0 +1,18 @@
+[project]
+name = "xleague-stats-analyzer"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "click>=8.1.8",
+    "pydantic>=2.10.6",
+    "pymupdf>=1.25.2",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "jupyter>=1.1.1",
+    "ruff>=0.9.4",
+    "tqdm>=4.67.1",
+]
