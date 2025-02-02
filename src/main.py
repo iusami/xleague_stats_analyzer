@@ -4,6 +4,7 @@ import re
 import click
 import pymupdf
 
+from logger import logger
 from models import Stats, Config
 
 
@@ -45,7 +46,7 @@ def load_team_names_from_file(file_path):
             choices = json.load(f)
             return [choice["name"] for choice in choices["teams"]]
     except FileNotFoundError:
-        click.echo(f"ERROR: ファイル {file_path} が見つかりません。", err=True)
+        logger.error("ファイル %s が見つかりません。", file_path)
         return []
 
 
@@ -105,11 +106,10 @@ def get_yards(
                     int(matches[0].split(parse_keyword)[0])
                 )
     if team_a_count == 0 or team_b_count == 0:
-        click.echo("ERROR: チームが一つしか見つかりません", err=True)
+        logger.error("チームが一つしか見つかりません")
     extracted_text_dict_list[0]["name"] = team_list_in_file[0]
     extracted_text_dict_list[1]["name"] = team_list_in_file[1]
     return extracted_text_dict_list
-
 
 @click.command()
 @click.argument("pdf_path", type=Path)
@@ -125,15 +125,15 @@ def main(pdf_path: Path, config: Path):
             run_yards=run_yards_dict_list[index]["texts"],
             pass_yards=pass_yards_dict_list[index]["texts"],
         )
-        print(
-            f"{run_yards_dict_list[index]['name']}\
-            had {stats.count_large_run_yards(config.run_long_gain_threshold)}\
-            runs greater than 15 yards."
+        logger.info(
+            "%s had %d runs greater than 15 yards.",
+            run_yards_dict_list[index]['name'],
+            stats.count_large_run_yards(config.run_long_gain_threshold),
         )
-        print(
-            f"{pass_yards_dict_list[index]['name']}\
-            had {stats.count_large_pass_yards(config.pass_long_gain_threshold)}\
-            passes greater than 20 yards."
+        logger.info(
+            "%s had %d passes greater than 20 yards.",
+            pass_yards_dict_list[index]['name'],
+            stats.count_large_pass_yards(config.pass_long_gain_threshold),
         )
 
 
