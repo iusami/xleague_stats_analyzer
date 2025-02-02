@@ -20,6 +20,7 @@ def open_pdf(file_path: Path) -> pymupdf.Document:
     pdf_document = pymupdf.open(file_path)
     return pdf_document
 
+
 def load_config_from_file(file_path: Path) -> Config:
     """
     Loads a configuration from a JSON file and returns a Config object.
@@ -34,19 +35,23 @@ def load_config_from_file(file_path: Path) -> Config:
         config_dict = json.load(f)
         return Config(**config_dict)
 
+
 def load_team_names_from_file(file_path):
     """
     ファイルから選択肢を読み込む
     """
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             choices = json.load(f)
-            return [choice['name'] for choice in choices["teams"]]
+            return [choice["name"] for choice in choices["teams"]]
     except FileNotFoundError:
         click.echo(f"ERROR: ファイル {file_path} が見つかりません。", err=True)
         return []
 
-def get_yards(pdf_document: pymupdf.Document, team_name_list:list[str], is_run: bool) -> dict:
+
+def get_yards(
+    pdf_document: pymupdf.Document, team_name_list: list[str], is_run: bool
+) -> dict:
     """
     Extracts and returns the run or pass yards for two teams from a PDF document.
     Args:
@@ -65,10 +70,7 @@ def get_yards(pdf_document: pymupdf.Document, team_name_list:list[str], is_run: 
         search_format = re.compile(r"-?\d+yパス")
         parse_keyword = "yパス"
     # 全ページをループして特定の書式のテキストを抽出
-    extracted_text_dict_list = [
-        {"name":"", "texts":[]},
-        {"name":"", "texts":[]}
-        ]
+    extracted_text_dict_list = [{"name": "", "texts": []}, {"name": "", "texts": []}]
 
     team_list_in_file = []
 
@@ -84,7 +86,10 @@ def get_yards(pdf_document: pymupdf.Document, team_name_list:list[str], is_run: 
         units = text.split("\n")
         for unit in units:
             # 「チーム名 Time」の記法からチーム名を抽出
-            if unit.split(" ")[0] in team_name_list and unit.split(" ")[0] not in team_list_in_file:
+            if (
+                unit.split(" ")[0] in team_name_list
+                and unit.split(" ")[0] not in team_list_in_file
+            ):
                 team_list_in_file.append(unit.split(" ")[0])
             # チーム名が見つかったら、その後の記録をそのチームのものとして処理
             if unit.split(" ")[0] in team_list_in_file:
@@ -101,25 +106,30 @@ def get_yards(pdf_document: pymupdf.Document, team_name_list:list[str], is_run: 
             print(team_mode)
             matches = search_format.findall(unit)
             if matches:
-                extracted_text_dict_list[team_mode]["texts"].append(int(matches[0].split(parse_keyword)[0]))
+                extracted_text_dict_list[team_mode]["texts"].append(
+                    int(matches[0].split(parse_keyword)[0])
+                )
     if team_a_count == 0 or team_b_count == 0:
         click.echo("ERROR: チームが一つしか見つかりません", err=True)
     extracted_text_dict_list[0]["name"] = team_list_in_file[0]
     extracted_text_dict_list[1]["name"] = team_list_in_file[1]
     return extracted_text_dict_list
 
+
 @click.command()
 @click.argument("pdf_path", type=Path)
 @click.option("--config", type=Path, default="config.json")
-def main(pdf_path: Path, config:Path):
+def main(pdf_path: Path, config: Path):
     config = load_config_from_file("config.json")
     team_names_list = load_team_names_from_file("teams.json")
     pdf_document = open_pdf(pdf_path)
     run_yards_dict_list = get_yards(pdf_document, team_names_list, True)
     pass_yards_dict_list = get_yards(pdf_document, team_names_list, False)
     for index in range(2):
-        stats = Stats(run_yards=run_yards_dict_list[index]["texts"],
-                         pass_yards=pass_yards_dict_list[index]["texts"])
+        stats = Stats(
+            run_yards=run_yards_dict_list[index]["texts"],
+            pass_yards=pass_yards_dict_list[index]["texts"],
+        )
         print(
             f"{run_yards_dict_list[index]['name']}\
             had {stats.count_large_run_yards(config.run_long_gain_threshold)}\
@@ -130,6 +140,7 @@ def main(pdf_path: Path, config:Path):
             had {stats.count_large_pass_yards(config.pass_long_gain_threshold)}\
             passes greater than 20 yards."
         )
+
 
 if __name__ == "__main__":
     main()

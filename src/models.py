@@ -1,8 +1,10 @@
 from pydantic import BaseModel
 
+
 class Config(BaseModel):
     run_long_gain_threshold: int
     pass_long_gain_threshold: int
+
 
 class Stats(BaseModel):
     run_yards: list[int]
