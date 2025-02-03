@@ -5,10 +5,14 @@ class Config(BaseModel):
     run_long_gain_threshold: int
     pass_long_gain_threshold: int
 
+class Third_down_stats(BaseModel):
+    third_down_success: int
+    third_down_numbers: int
 
 class Stats(BaseModel):
     run_yards: list[int]
     pass_yards: list[int]
+    third_down_stats: Third_down_stats
 
     def count_large_run_yards(self, threshold: int) -> int:
         """
@@ -33,3 +37,12 @@ class Stats(BaseModel):
             int: The count of pass yards greater than the threshold.
         """
         return sum(1 for yard in self.pass_yards if yard > threshold)
+
+    def get_third_down_rate(self) -> float:
+        """
+        Calculates the third down conversion rate.
+
+        Returns:
+            float: The third down conversion rate.
+        """
+        return (self.third_down_stats.third_down_success / self.third_down_stats.third_down_numbers) * 100
