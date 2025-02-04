@@ -1,8 +1,7 @@
-# PDFファイルを読み込む
 import pymupdf
-from models import Third_down_stats
+from models import ThirdDownStats
 
-def get_3rd_down_info(pdf_document: pymupdf.Document) -> Third_down_stats:
+def GetThirdDownInfo(pdf_document: pymupdf.Document) -> ThirdDownStats:
     # 1枚目のページを取得
     page = pdf_document.load_page(0)
 
@@ -25,10 +24,10 @@ def get_3rd_down_info(pdf_document: pymupdf.Document) -> Third_down_stats:
     visitor_team_3rd_down_success = lines[third_down_idx+2].split("(")[0].split("/")[0]
     visitor_team_3rd_down_numbers = lines[third_down_idx+2].split("(")[0].split("/")[1]
 
-    return Third_down_stats(
+    return ThirdDownStats(
         third_down_success=home_team_3rd_down_success,
         third_down_numbers=home_team_3rd_down_numbers
-    ), Third_down_stats(
+    ), ThirdDownStats(
         third_down_success=visitor_team_3rd_down_success,
         third_down_numbers=visitor_team_3rd_down_numbers
     )

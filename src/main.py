@@ -3,7 +3,7 @@ import click
 
 from logger import logger
 from logics import get_yards
-from break_team_stats import get_3rd_down_info
+from break_team_stats import GetThirdDownInfo
 from models import Stats
 from utils import load_config_from_file, load_team_names_from_file, open_pdf
 
@@ -17,7 +17,7 @@ def main(pdf_path: Path, config: Path):
     pdf_document = open_pdf(pdf_path)
     run_yards_dict_list = get_yards(pdf_document, team_names_list, True)
     pass_yards_dict_list = get_yards(pdf_document, team_names_list, False)
-    third_down_stats = get_3rd_down_info(pdf_document)
+    third_down_stats = GetThirdDownInfo(pdf_document)
     for index in range(2):
         stats = Stats(
             run_yards=run_yards_dict_list[index]["texts"],

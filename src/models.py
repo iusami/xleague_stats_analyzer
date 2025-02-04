@@ -5,14 +5,14 @@ class Config(BaseModel):
     run_long_gain_threshold: int
     pass_long_gain_threshold: int
 
-class Third_down_stats(BaseModel):
+class ThirdDownStats(BaseModel):
     third_down_success: int
     third_down_numbers: int
 
 class Stats(BaseModel):
     run_yards: list[int]
     pass_yards: list[int]
-    third_down_stats: Third_down_stats
+    third_down_stats: ThirdDownStats
 
     def count_large_run_yards(self, threshold: int) -> int:
         """
