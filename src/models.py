@@ -5,11 +5,19 @@ class Config(BaseModel):
     run_long_gain_threshold: int
     pass_long_gain_threshold: int
 
+
 class ThirdDownStats(BaseModel):
     third_down_success: int
     third_down_numbers: int
 
+
+class TeamThirdDownStats(BaseModel):
+    home_team_third_down_stats: ThirdDownStats
+    visitor_team_third_down_stats: ThirdDownStats
+
+
 class Stats(BaseModel):
+    team_name: str
     run_yards: list[int]
     pass_yards: list[int]
     third_down_stats: ThirdDownStats
@@ -45,4 +53,7 @@ class Stats(BaseModel):
         Returns:
             float: The third down conversion rate.
         """
-        return (self.third_down_stats.third_down_success / self.third_down_stats.third_down_numbers) * 100
+        return (
+            self.third_down_stats.third_down_success
+            / self.third_down_stats.third_down_numbers
+        ) * 100

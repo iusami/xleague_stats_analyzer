@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-import pymupdf
+import pymupdf  # type: ignore
 
 from logger import logger
 from models import Config
