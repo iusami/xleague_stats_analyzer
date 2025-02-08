@@ -38,28 +38,23 @@ def test_load_config_from_file(mock_config, mock_file):
     assert result.run_long_gain_threshold == 10
     assert result.pass_long_gain_threshold == 20
 
-
-@patch(
-    "builtins.open",
-    new_callable=mock_open,
-    read_data='{"teams": [{"name": "Team A"}, {"name": "Team B"}]}',
-)
+@patch("builtins.open", new_callable=mock_open, read_data='{"teams":[{"name":"Team A"},{"name":"Team B"}],"abbreviation":"TA"}')
 def test_load_team_names_from_file(mock_file):
     file_path = Path("/path/to/teams.json")
-    result = load_team_names_from_file(file_path)
+    team_names, team_abbreviation = load_team_names_from_file(file_path)
 
     mock_file.assert_called_once_with(file_path, "r", encoding="utf-8")
-    assert result == ["Team A", "Team B"]
+    assert team_names == ["Team A", "Team B"]
+    assert team_abbreviation == "TA"
 
 
-@patch("utils.logger.error")
-def test_load_team_names_from_file_file_not_found(mock_logger):
+@patch("builtins.open", new_callable=mock_open)
+def test_load_team_names_from_file_file_not_found(mock_file):
+    mock_file.side_effect = FileNotFoundError
     file_path = Path("/path/to/nonexistent.json")
-    result = load_team_names_from_file(file_path)
 
-    mock_logger.assert_called_once_with("ファイル %s が見つかりません。", file_path)
-    assert result == []
-
+    with pytest.raises(FileNotFoundError):
+        load_team_names_from_file(file_path)
 
 if __name__ == "__main__":
     pytest.main()
