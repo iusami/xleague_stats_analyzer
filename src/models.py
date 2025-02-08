@@ -16,11 +16,22 @@ class TeamThirdDownStats(BaseModel):
     visitor_team_third_down_stats: ThirdDownStats
 
 
+class PenaltyInfo(BaseModel):
+    count: int
+    yards: int
+
+
+class TeamPenaltyInfo(BaseModel):
+    home_team_penalty_info: PenaltyInfo
+    visitor_team_penalty_info: PenaltyInfo
+
+
 class Stats(BaseModel):
     team_name: str
     run_yards: list[int]
     pass_yards: list[int]
     third_down_stats: ThirdDownStats
+    penalty_info: PenaltyInfo
 
     def count_large_run_yards(self, threshold: int) -> int:
         """

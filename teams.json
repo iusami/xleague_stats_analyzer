@@ -1,28 +1,46 @@
 {
     "teams": [
         {
-            "name": "富士通フロンティアーズ"
+            "name": "富士通フロンティアーズ",
+            "abbreviation": "FF"
         },
         {
-            "name": "パナソニックインパルス"
+            "name": "パナソニックインパルス",
+            "abbreviation": "PI"
         },
         {
-            "name": "オービックシーガルズ"
+            "name": "オービックシーガルズ",
+            "abbreviation": "OS"
         },
         {
-            "name": "ノジマ相模原ライズ"
+            "name": "ノジマ相模原ライズ",
+            "abbreviation": "NR"
         },
         {
-            "name":"IBM BIG BLUE"
+            "name":"IBM BIG BLUE",
+            "abbreviation": "BB"
         },
         {
-            "name":"SEKISUIチャレンジャーズ"
+            "name":"SEKISUIチャレンジャーズ",
+            "abbreviation": "SC"
         },
         {
-            "name":"東京ガスクリエイターズ"
+            "name":"東京ガスクリエイターズ",
+            "abbreviation": "TG"
         },
         {
-            "name":"エレコム神戸ファイニーズ"
+            "name":"エレコム神戸ファイニーズ",
+            "abbreviation": "EF"
         }
-    ]
+    ],
+    "abbreviation": {
+        "FF": "富士通フロンティアーズ",
+        "PI": "パナソニックインパルス",
+        "OS": "オービックシーガルズ",
+        "NR": "ノジマ相模原ライズ",
+        "BB": "IBM BIG BLUE",
+        "SC": "SEKISUIチャレンジャーズ",
+        "TG": "東京ガスクリエイターズ",
+        "EF": "エレコム神戸ファイニーズ"
+    }
 }

@@ -43,7 +43,9 @@ def load_team_names_from_file(file_path):
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             choices = json.load(f)
-            return [choice["name"] for choice in choices["teams"]]
-    except FileNotFoundError:
+            team_names = [choice["name"] for choice in choices["teams"]]
+            team_abbreviation = choices["abbreviation"]
+            return team_names, team_abbreviation
+    except FileNotFoundError as exc:
         logger.error("ファイル %s が見つかりません。", file_path)
-        return []
+        raise FileNotFoundError from exc
