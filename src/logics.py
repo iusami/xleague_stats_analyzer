@@ -224,8 +224,10 @@ def get_redzone_info(
             break
         if team_mode == 0:
             home_redzone_info[0] += 1
+            # Touchdownはプレーカウントとスコアをカウント
             if "TOUCHDOWN" in unit:
                 home_redzone_info[1] += 1
+            # FGはスコアのみカウント
             if "FG" in unit and "GOOD" in unit:
                 home_redzone_info[0] -= 1
                 home_redzone_info[1] += 1
