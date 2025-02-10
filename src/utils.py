@@ -21,6 +21,25 @@ def open_pdf(file_path: Path) -> pymupdf.Document:
     return pdf_document
 
 
+def open_pdf_to_list(file_path: Path) -> list:
+    pdf_document = pymupdf.open(file_path)
+    same_line_words = []
+    for page_num in range(len(pdf_document)):
+        page = pdf_document.load_page(page_num)
+        words = page.get_text("words")
+        tmp_same_line = []
+        current_y0 = 0
+        margin = 10
+        for word in words:
+            if word[1] - current_y0 < margin:
+                tmp_same_line.append(word[4])
+            else:
+                same_line_words.append(" ".join(tmp_same_line))
+                tmp_same_line = [word[4]]
+                current_y0 = word[1]
+    return same_line_words
+
+
 def load_config_from_file(file_path: Path) -> Config:
     """
     Loads a configuration from a JSON file and returns a Config object.
@@ -45,7 +64,8 @@ def load_team_names_from_file(file_path):
             choices = json.load(f)
             team_names = [choice["name"] for choice in choices["teams"]]
             team_abbreviation = choices["abbreviation"]
-            return team_names, team_abbreviation
+            team_abbreviation_by_team = choices["abbreviation_by_team"]
+            return team_names, team_abbreviation, team_abbreviation_by_team
     except FileNotFoundError as exc:
         logger.error("ファイル %s が見つかりません。", file_path)
         raise FileNotFoundError from exc

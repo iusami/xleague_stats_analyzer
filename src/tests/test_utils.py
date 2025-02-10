@@ -42,15 +42,18 @@ def test_load_config_from_file(mock_config, mock_file):
 @patch(
     "builtins.open",
     new_callable=mock_open,
-    read_data='{"teams":[{"name":"Team A"},{"name":"Team B"}],"abbreviation":"TA"}',
+    read_data='{"teams":[{"name":"Team A"},{"name":"Team B"}],"abbreviation":"TA","abbreviation_by_team":{"Team A":"TA","Team B":"TB"}}',
 )
 def test_load_team_names_from_file(mock_file):
     file_path = Path("/path/to/teams.json")
-    team_names, team_abbreviation = load_team_names_from_file(file_path)
+    team_names, team_abbreviation, team_abbreviation_by_team = (
+        load_team_names_from_file(file_path)
+    )
 
     mock_file.assert_called_once_with(file_path, "r", encoding="utf-8")
     assert team_names == ["Team A", "Team B"]
     assert team_abbreviation == "TA"
+    assert team_abbreviation_by_team == {"Team A": "TA", "Team B": "TB"}
 
 
 @patch("builtins.open", new_callable=mock_open)

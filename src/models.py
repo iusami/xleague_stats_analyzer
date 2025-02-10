@@ -26,12 +26,23 @@ class TeamPenaltyInfo(BaseModel):
     visitor_team_penalty_info: PenaltyInfo
 
 
+class RedzoneInfo(BaseModel):
+    count: int
+    touchdown: int
+
+
+class TeamRedzoneInfo(BaseModel):
+    home_team_redzone_info: RedzoneInfo
+    visitor_team_redzone_info: RedzoneInfo
+
+
 class Stats(BaseModel):
     team_name: str
     run_yards: list[int]
     pass_yards: list[int]
     third_down_stats: ThirdDownStats
     penalty_info: PenaltyInfo
+    redzone_info: RedzoneInfo
 
     def count_large_run_yards(self, threshold: int) -> int:
         """
