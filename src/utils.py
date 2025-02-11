@@ -4,7 +4,10 @@ from pathlib import Path
 import pymupdf  # type: ignore
 
 from logger import logger
-from models import Config
+from models import Config, Stats
+import csv
+
+EXCLUDE_EXPORT_KEYS = {"run_yards", "pass_yards", "config"}
 
 
 def open_pdf(file_path: Path) -> pymupdf.Document:
@@ -69,3 +72,41 @@ def load_team_names_from_file(file_path):
     except FileNotFoundError as exc:
         logger.error("ファイル %s が見つかりません。", file_path)
         raise FileNotFoundError from exc
+
+
+def export_stats_to_json(stats: Stats, file_path: Path):
+    """
+    Exports the given Stats object to a JSON file.
+
+    Args:
+        stats (Stats): The Stats object to be exported.
+        file_path (Path): The path to the JSON file to be exported.
+    """
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(
+            stats.model_dump(exclude=EXCLUDE_EXPORT_KEYS),
+            f,
+            ensure_ascii=False,
+            indent=4,
+        )
+
+
+def flatten_dict(d, parent_key="", sep="_"):
+    items = []
+    for k, v in d.items():
+        new_key = f"{parent_key}{sep}{k}" if parent_key else k
+        if isinstance(v, dict):
+            items.extend(flatten_dict(v, new_key, sep=sep).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)
+
+
+def export_stats_to_csv(stats: Stats, file_path: Path):
+    stats_dict = stats.model_dump(exclude=EXCLUDE_EXPORT_KEYS)
+    flat_stats = flatten_dict(stats_dict)
+
+    with open(file_path, "w", newline="", encoding="utf-8") as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=flat_stats.keys())
+        writer.writeheader()
+        writer.writerow(flat_stats)
