@@ -36,6 +36,30 @@ class TeamRedzoneInfo(BaseModel):
     visitor_team_redzone_info: RedzoneInfo
 
 
+class PassingAttempsInfo(BaseModel):
+    attempts: int
+    completion: int
+    interception: int
+
+
+class TeamPassingAttemptsInfo(BaseModel):
+    home_info: PassingAttempsInfo
+    visitor_info: PassingAttempsInfo
+
+
+class BreakDownStatsInfo(BaseModel):
+    team_name: str
+    run_gain: int
+    run_play: int
+    pass_gain: int
+    passing_attempts_info: PassingAttempsInfo
+
+
+class TeamBreakDownStatsInfo(BaseModel):
+    home_team_break_down_stats: BreakDownStatsInfo
+    visitor_team_break_down_stats: BreakDownStatsInfo
+
+
 class Stats(BaseModel):
     team_name: str
     run_yards: list[int]
@@ -43,6 +67,7 @@ class Stats(BaseModel):
     third_down_stats: ThirdDownStats
     penalty_info: PenaltyInfo
     redzone_info: RedzoneInfo
+    team_stats_info: BreakDownStatsInfo
     config: Config
     big_run_count: int = 0
     big_pass_count: int = 0

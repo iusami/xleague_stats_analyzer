@@ -2,7 +2,6 @@ import re
 import pymupdf  # type: ignore  # noqa
 from pydantic import BaseModel
 
-from logger import logger
 from models import PenaltyInfo, TeamPenaltyInfo, RedzoneInfo, TeamRedzoneInfo
 
 
@@ -19,9 +18,8 @@ class TeamsExtractedYards(BaseModel):
 
 def get_yards(
     pdf_document: pymupdf.Document,
-    team_name_list: tuple[str],
     team_abbreviation_dict: dict[str, str],
-    team_abbreviation_by_team_dict: dict[str, str],
+    team_list_in_file: list[str],
 ) -> tuple[TeamsExtractedYards, TeamPenaltyInfo]:
     """
     Extracts and returns the rushing and passing yards,
@@ -51,13 +49,6 @@ def get_yards(
 
     # 全ページのテキストを一度に取得
     units = get_text_units(pdf_document)
-
-    # チーム名を抽出
-    team_list_in_file, _ = get_team_info(
-        team_name_list,
-        team_abbreviation_by_team_dict,
-        units,
-    )
 
     # unitsの中から"Play by Play"の後の記録を抽出
     for ct, unit in enumerate(units):
@@ -107,28 +98,6 @@ def get_yards(
             count=visitor_penalty_info[0], yards=visitor_penalty_info[1]
         ),
     )
-
-
-def get_team_info(
-    team_name_list,
-    team_abbreviation_by_team_dict,
-    units,
-) -> tuple[list[str], list[str]]:
-    team_list_in_file = []
-    team_abbreviation_in_file = []
-    for unit in units:
-        if (
-            unit.split(" ")[0] in list(team_name_list)
-            and unit.split(" ")[0] not in team_list_in_file
-        ):
-            team_list_in_file.append(unit.split(" ")[0])
-            team_abbreviation_in_file.append(  # noqa
-                team_abbreviation_by_team_dict[unit.split(" ")[0]]
-            )
-    if len(team_list_in_file) != 2:
-        logger.error("見つかったチーム数が2つではありません。")
-        raise ValueError("The number of teams found is not equal to 2.")
-    return team_list_in_file, team_abbreviation_in_file
 
 
 def get_text_units(pdf_document):
