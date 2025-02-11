@@ -36,11 +36,23 @@ class TeamRedzoneInfo(BaseModel):
     visitor_team_redzone_info: RedzoneInfo
 
 
+class PassingAttempsInfo(BaseModel):
+    attempts: int
+    completion: int
+    interception: int
+
+
+class TeamPassingAttemptsInfo(BaseModel):
+    home_info: PassingAttempsInfo
+    visitor_info: PassingAttempsInfo
+
+
 class BreakDownStatsInfo(BaseModel):
     team_name: str
     run_gain: int
     run_play: int
     pass_gain: int
+    passing_attempts_info: PassingAttempsInfo
 
 
 class TeamBreakDownStatsInfo(BaseModel):

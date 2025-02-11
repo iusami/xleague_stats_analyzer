@@ -4,6 +4,8 @@ from models import (
     ThirdDownStats,
     TeamThirdDownStats,
     BreakDownStatsInfo,
+    PassingAttempsInfo,
+    TeamPassingAttemptsInfo,
 )
 from logger import logger
 from utils import open_pdf_to_list_only_page
@@ -58,6 +60,32 @@ def extract_stat(same_line_words, stat_name):
     raise ValueError(f"{stat_name}が見つかりませんでした。")
 
 
+def extract_pass_attempts(same_line_words, stat_name) -> TeamPassingAttemptsInfo:
+    for line in same_line_words:
+        words = [word for word in line.split(" ") if word]
+        if stat_name in line:
+            logger.debug("%sが見つかりました。", stat_name)
+            logger.debug(words)
+            home_attempts, home_completion, home_interception = words[-2].split("-")
+            visitor_attempts, visitor_completion, visitor_interception = words[
+                -1
+            ].split("-")
+            return TeamPassingAttemptsInfo(
+                home_info=PassingAttempsInfo(
+                    attempts=int(home_attempts),
+                    completion=int(home_completion),
+                    interception=int(home_interception),
+                ),
+                visitor_info=PassingAttempsInfo(
+                    attempts=int(visitor_attempts),
+                    completion=int(visitor_completion),
+                    interception=int(visitor_interception),
+                ),
+            )
+
+    raise ValueError(f"{stat_name}が見つかりませんでした。")
+
+
 def break_down_team_stats(
     pdf_document: pymupdf.Document, team_name_list: list[str]
 ) -> TeamBreakDownStatsInfo:
@@ -66,6 +94,8 @@ def break_down_team_stats(
     home_team_name, visitor_team_name = get_home_visitor_team_name(
         team_name_list, same_line_words
     )
+
+    team_passing_attempts_info = extract_pass_attempts(same_line_words, "試投数")
 
     home_run_gain, visitor_run_gain = extract_stat(same_line_words, "RUN獲得ヤード数")
     home_run_play, visitor_run_play = extract_stat(same_line_words, "RUNプレイ数")
@@ -77,12 +107,14 @@ def break_down_team_stats(
             run_gain=home_run_gain,
             run_play=home_run_play,
             pass_gain=home_pass_gain,
+            passing_attempts_info=team_passing_attempts_info.home_info,
         ),
         visitor_team_break_down_stats=BreakDownStatsInfo(
             team_name=visitor_team_name,
             run_gain=visitor_run_gain,
             run_play=visitor_run_play,
             pass_gain=visitor_pass_gain,
+            passing_attempts_info=team_passing_attempts_info.visitor_info,
         ),
     )
 
