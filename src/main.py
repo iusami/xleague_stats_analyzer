@@ -10,6 +10,8 @@ from utils import (
     load_team_names_from_file,
     open_pdf,
     open_pdf_to_list,
+    export_stats_to_json,
+    export_stats_to_csv,
 )
 
 
@@ -38,20 +40,27 @@ def main(pdf_path: Path, config_path: Path):
     team_redzone_info = get_redzone_info(
         same_line_words_list, team_list_in_file, team_abbreviation_in_file
     )
-    for extracted_yards, third_down_stats, penalty_info, redzone_info in [
-        (
-            team_extracted_yards.home_team_extracted_yards,
-            team_third_down_stats.home_team_third_down_stats,
-            team_penalty_info.home_team_penalty_info,
-            team_redzone_info.home_team_redzone_info,
-        ),
-        (
-            team_extracted_yards.visitor_team_extracted_yards,
-            team_third_down_stats.visitor_team_third_down_stats,
-            team_penalty_info.visitor_team_penalty_info,
-            team_redzone_info.visitor_team_redzone_info,
-        ),
-    ]:
+    for ct, (
+        extracted_yards,
+        third_down_stats,
+        penalty_info,
+        redzone_info,
+    ) in enumerate(
+        [
+            (
+                team_extracted_yards.home_team_extracted_yards,
+                team_third_down_stats.home_team_third_down_stats,
+                team_penalty_info.home_team_penalty_info,
+                team_redzone_info.home_team_redzone_info,
+            ),
+            (
+                team_extracted_yards.visitor_team_extracted_yards,
+                team_third_down_stats.visitor_team_third_down_stats,
+                team_penalty_info.visitor_team_penalty_info,
+                team_redzone_info.visitor_team_redzone_info,
+            ),
+        ]
+    ):
         stats = Stats(
             team_name=extracted_yards.team_name,
             run_yards=extracted_yards.rushing_yards,
@@ -59,21 +68,22 @@ def main(pdf_path: Path, config_path: Path):
             third_down_stats=third_down_stats,
             penalty_info=penalty_info,
             redzone_info=redzone_info,
+            config=config,
         )
         logger.info(
             "%s had %d runs greater than 15 yards.",
             stats.team_name,
-            stats.count_large_run_yards(config.run_long_gain_threshold),
+            stats.big_run_count,
         )
         logger.info(
             "%s had %d passes greater than 20 yards.",
             stats.team_name,
-            stats.count_large_pass_yards(config.pass_long_gain_threshold),
+            stats.big_pass_count,
         )
         logger.info(
             "%s had a third down conversion rate of %.2d%%.",
             stats.team_name,
-            stats.get_third_down_rate(),
+            stats.third_down_success_rate,
         )
         logger.info(
             "%s did %d times penalty of %d yards.",
@@ -87,6 +97,8 @@ def main(pdf_path: Path, config_path: Path):
             stats.redzone_info.count,
             stats.redzone_info.touchdown,
         )
+        export_stats_to_json(stats, Path(f"stats_{ct}.json"))
+        export_stats_to_csv(stats, Path(f"stats_{ct}.csv"))
 
 
 if __name__ == "__main__":

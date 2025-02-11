@@ -43,8 +43,22 @@ class Stats(BaseModel):
     third_down_stats: ThirdDownStats
     penalty_info: PenaltyInfo
     redzone_info: RedzoneInfo
+    config: Config
+    big_run_count: int = 0
+    big_pass_count: int = 0
+    third_down_success_rate: int = 0
 
-    def count_large_run_yards(self, threshold: int) -> int:
+    def __init__(self, **data):
+        super().__init__(**data)
+        self.big_run_count = self._count_large_run_yards(
+            self.config.run_long_gain_threshold
+        )
+        self.big_pass_count = self._count_large_pass_yards(
+            self.config.pass_long_gain_threshold
+        )
+        self.third_down_success_rate = self._get_third_down_rate()
+
+    def _count_large_run_yards(self, threshold: int) -> int:
         """
         Counts the number of run yards greater than the given threshold.
 
@@ -56,7 +70,7 @@ class Stats(BaseModel):
         """
         return sum(1 for yard in self.run_yards if yard > threshold)
 
-    def count_large_pass_yards(self, threshold: int) -> int:
+    def _count_large_pass_yards(self, threshold: int) -> int:
         """
         Counts the number of pass yards greater than the given threshold.
 
@@ -68,14 +82,17 @@ class Stats(BaseModel):
         """
         return sum(1 for yard in self.pass_yards if yard > threshold)
 
-    def get_third_down_rate(self) -> float:
+    def _get_third_down_rate(self) -> int:
         """
         Calculates the third down conversion rate.
 
         Returns:
             float: The third down conversion rate.
         """
-        return (
-            self.third_down_stats.third_down_success
-            / self.third_down_stats.third_down_numbers
-        ) * 100
+        return int(
+            (
+                self.third_down_stats.third_down_success
+                / self.third_down_stats.third_down_numbers
+            )
+            * 100
+        )
