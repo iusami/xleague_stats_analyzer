@@ -2,8 +2,8 @@ from pathlib import Path
 import click
 
 from logger import logger
-from logics import get_yards, get_team_info, get_text_units, get_redzone_info
-from break_team_stats import get_third_down_info
+from logics import get_yards, get_redzone_info
+from break_team_stats import break_down_team_stats, get_third_down_info
 from models import Stats
 from utils import (
     load_config_from_file,
@@ -24,27 +24,35 @@ def main(pdf_path: Path, config_path: Path):
         load_team_names_from_file("teams.json")
     )
     pdf_document = open_pdf(pdf_path)
-    units = get_text_units(pdf_document)
-    team_list_in_file, team_abbreviation_in_file = get_team_info(
-        team_names_list, team_abbreviation_by_team_dict, units
-    )
+
     same_line_words_list = open_pdf_to_list(pdf_path)
+    team_break_down_stats_info = break_down_team_stats(pdf_document, team_names_list)
+    team_list_in_file = [
+        team_break_down_stats_info.home_team_break_down_stats.team_name,
+        team_break_down_stats_info.visitor_team_break_down_stats.team_name,
+    ]
+    team_abbreviation_in_file = [
+        team_abbreviation_by_team_dict[team] for team in team_list_in_file
+    ]
     team_extracted_yards, team_penalty_info = get_yards(
         pdf_document,
         team_names_list,
         team_abbreviation_dict,
         team_abbreviation_by_team_dict,
+        team_list_in_file,
     )
 
     team_third_down_stats = get_third_down_info(pdf_document)
     team_redzone_info = get_redzone_info(
         same_line_words_list, team_list_in_file, team_abbreviation_in_file
     )
+
     for ct, (
         extracted_yards,
         third_down_stats,
         penalty_info,
         redzone_info,
+        team_stats_info,
     ) in enumerate(
         [
             (
@@ -52,12 +60,14 @@ def main(pdf_path: Path, config_path: Path):
                 team_third_down_stats.home_team_third_down_stats,
                 team_penalty_info.home_team_penalty_info,
                 team_redzone_info.home_team_redzone_info,
+                team_break_down_stats_info.home_team_break_down_stats,
             ),
             (
                 team_extracted_yards.visitor_team_extracted_yards,
                 team_third_down_stats.visitor_team_third_down_stats,
                 team_penalty_info.visitor_team_penalty_info,
                 team_redzone_info.visitor_team_redzone_info,
+                team_break_down_stats_info.visitor_team_break_down_stats,
             ),
         ]
     ):
@@ -68,6 +78,7 @@ def main(pdf_path: Path, config_path: Path):
             third_down_stats=third_down_stats,
             penalty_info=penalty_info,
             redzone_info=redzone_info,
+            team_stats_info=team_stats_info,
             config=config,
         )
         logger.info(

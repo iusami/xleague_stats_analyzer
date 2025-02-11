@@ -1,5 +1,12 @@
 import pymupdf  # type: ignore  # noqa
-from models import ThirdDownStats, TeamThirdDownStats
+from models import (
+    TeamBreakDownStatsInfo,
+    ThirdDownStats,
+    TeamThirdDownStats,
+    BreakDownStatsInfo,
+)
+from logger import logger
+from utils import open_pdf_to_list_only_page
 
 
 def get_third_down_info(pdf_document: pymupdf.Document) -> TeamThirdDownStats:
@@ -39,3 +46,61 @@ def get_third_down_info(pdf_document: pymupdf.Document) -> TeamThirdDownStats:
             third_down_numbers=visitor_team_3rd_down_numbers,
         ),
     )
+
+
+def extract_stat(same_line_words, stat_name):
+    for line in same_line_words:
+        words = [word for word in line.split(" ") if word]
+        if stat_name in line:
+            logger.info("%sが見つかりました。", stat_name)
+            logger.info(words)
+            return words[1], words[2]
+    raise ValueError(f"{stat_name}が見つかりませんでした。")
+
+
+def break_down_team_stats(
+    pdf_document: pymupdf.Document, team_name_list: list[str]
+) -> TeamBreakDownStatsInfo:
+    same_line_words = open_pdf_to_list_only_page(pdf_document, 0)
+
+    home_team_name, visitor_team_name = get_home_visitor_team_name(
+        team_name_list, same_line_words
+    )
+
+    home_run_gain, visitor_run_gain = extract_stat(same_line_words, "RUN獲得ヤード数")
+    home_run_play, visitor_run_play = extract_stat(same_line_words, "RUNプレイ数")
+    home_pass_gain, visitor_pass_gain = extract_stat(same_line_words, "PASS獲得ヤード")
+
+    return TeamBreakDownStatsInfo(
+        home_team_break_down_stats=BreakDownStatsInfo(
+            team_name=home_team_name,
+            run_gain=home_run_gain,
+            run_play=home_run_play,
+            pass_gain=home_pass_gain,
+        ),
+        visitor_team_break_down_stats=BreakDownStatsInfo(
+            team_name=visitor_team_name,
+            run_gain=visitor_run_gain,
+            run_play=visitor_run_play,
+            pass_gain=visitor_pass_gain,
+        ),
+    )
+
+
+def get_home_visitor_team_name(team_name_list, same_line_words):
+    home_team_name = None
+    visitor_team_name = None
+    for line in same_line_words:
+        if "ホーム" in line:
+            words = [word for word in line.split(" ") if word]
+            for team_name in team_name_list:
+                if team_name in words:
+                    home_team_name = team_name
+        if "ビジター" in line:
+            words = [word for word in line.split(" ") if word]
+            for team_name in team_name_list:
+                if team_name in words:
+                    visitor_team_name = team_name
+    if home_team_name is None or visitor_team_name is None:
+        raise ValueError("ホームチーム名またはビジターチーム名が見つかりませんでした。")
+    return home_team_name, visitor_team_name

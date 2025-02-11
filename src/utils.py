@@ -43,6 +43,23 @@ def open_pdf_to_list(file_path: Path) -> list:
     return same_line_words
 
 
+def open_pdf_to_list_only_page(pdf_document: pymupdf.Document, page_num: int) -> list:
+    same_line_words = []
+    page = pdf_document.load_page(page_num)
+    words = page.get_text("words")
+    tmp_same_line = []
+    current_y0 = 0
+    margin = 3
+    for word in words:
+        if word[1] - current_y0 < margin:
+            tmp_same_line.append(word[4])
+        else:
+            same_line_words.append(" ".join(tmp_same_line))
+            tmp_same_line = [word[4]]
+            current_y0 = word[1]
+    return same_line_words
+
+
 def load_config_from_file(file_path: Path) -> Config:
     """
     Loads a configuration from a JSON file and returns a Config object.
