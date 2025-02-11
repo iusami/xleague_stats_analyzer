@@ -52,8 +52,8 @@ def extract_stat(same_line_words, stat_name):
     for line in same_line_words:
         words = [word for word in line.split(" ") if word]
         if stat_name in line:
-            logger.info("%sが見つかりました。", stat_name)
-            logger.info(words)
+            logger.debug("%sが見つかりました。", stat_name)
+            logger.debug(words)
             return words[1], words[2]
     raise ValueError(f"{stat_name}が見つかりませんでした。")
 

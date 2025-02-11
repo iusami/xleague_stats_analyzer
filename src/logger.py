@@ -14,3 +14,18 @@ ch.setFormatter(formatter)
 
 # ハンドラーをロガーに追加
 logger.addHandler(ch)
+
+
+def set_log_level(level: str):
+    match level:
+        case "DEBUG":
+            logger.setLevel(logging.DEBUG)
+        case "INFO":
+            logger.setLevel(logging.INFO)
+        case "WARNING":
+            logger.setLevel(logging.WARNING)
+        case "ERROR":
+            logger.setLevel(logging.ERROR)
+        case _:
+            logger.setLevel(logging.INFO)
+            logger.warning("ログレベルが不正です。INFOに設定します。")

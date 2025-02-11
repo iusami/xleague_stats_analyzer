@@ -18,9 +18,7 @@ class TeamsExtractedYards(BaseModel):
 
 def get_yards(
     pdf_document: pymupdf.Document,
-    team_name_list: tuple[str],
     team_abbreviation_dict: dict[str, str],
-    team_abbreviation_by_team_dict: dict[str, str],
     team_list_in_file: list[str],
 ) -> tuple[TeamsExtractedYards, TeamPenaltyInfo]:
     """

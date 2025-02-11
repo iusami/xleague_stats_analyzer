@@ -1,7 +1,7 @@
 from pathlib import Path
 import click
 
-from logger import logger
+from logger import logger, set_log_level
 from logics import get_yards, get_redzone_info
 from break_team_stats import break_down_team_stats, get_third_down_info
 from models import Stats
@@ -18,7 +18,13 @@ from utils import (
 @click.command()
 @click.argument("pdf_path", type=Path)
 @click.argument("config_path", type=Path, default="config.json")
-def main(pdf_path: Path, config_path: Path):
+@click.option(
+    "--log-level",
+    type=click.Choice(["DEBUG", "INFO", "WARNING", "ERROR"], case_sensitive=False),
+    default="INFO",
+)
+def main(pdf_path: Path, config_path: Path, log_level: str):
+    set_log_level(log_level)
     config = load_config_from_file(config_path)
     team_names_list, team_abbreviation_dict, team_abbreviation_by_team_dict = (
         load_team_names_from_file("teams.json")
@@ -36,9 +42,7 @@ def main(pdf_path: Path, config_path: Path):
     ]
     team_extracted_yards, team_penalty_info = get_yards(
         pdf_document,
-        team_names_list,
         team_abbreviation_dict,
-        team_abbreviation_by_team_dict,
         team_list_in_file,
     )
 
