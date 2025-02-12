@@ -230,9 +230,6 @@ def get_redzone_info(
 def get_series(
     pdf_document: pymupdf.Document, team_list_in_file: list[str]
 ) -> TeamSeriesStatsInfo:
-    home_score_count = 0
-    visitor_score_count = 0
-
     start_home_drive_idx = None
     end_home_drive_idx = None
     start_visitor_drive_idx = None
