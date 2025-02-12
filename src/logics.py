@@ -250,7 +250,7 @@ def get_series(
     if start_home_drive_idx is None:
         raise ValueError("ホームチームのドライブチャートが見つかりません")
     if end_home_drive_idx is None:
-        raise ValueError("ホームチームのドライブチャートの終わり見つかりません")
+        raise ValueError("ホームチームのドライブチャートの終わりが見つかりません")
     if start_visitor_drive_idx is None:
         raise ValueError("ビジターチームのドライブチャートが見つかりません")
     if end_visitor_drive_idx is None:
