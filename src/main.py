@@ -58,7 +58,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
         penalty_info,
         redzone_info,
         team_stats_info,
-        team_series_info,
+        series_info,
     ) in enumerate(
         [
             (
@@ -87,7 +87,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
             penalty_info=penalty_info,
             redzone_info=redzone_info,
             team_stats_info=team_stats_info,
-            series_info=team_series_info,
+            series_info=series_info,
             config=config,
         )
         logger.info(
