@@ -60,6 +60,16 @@ class TeamBreakDownStatsInfo(BaseModel):
     visitor_team_break_down_stats: BreakDownStatsInfo
 
 
+class SeriesStatsInfo(BaseModel):
+    series_count: int
+    score_count: int
+
+
+class TeamSeriesStatsInfo(BaseModel):
+    home_series_stats: SeriesStatsInfo
+    visitor_series_stats: SeriesStatsInfo
+
+
 class Stats(BaseModel):
     team_name: str
     run_yards: list[int]
@@ -68,6 +78,7 @@ class Stats(BaseModel):
     penalty_info: PenaltyInfo
     redzone_info: RedzoneInfo
     team_stats_info: BreakDownStatsInfo
+    series_info: SeriesStatsInfo
     config: Config
     big_run_count: int = 0
     big_pass_count: int = 0

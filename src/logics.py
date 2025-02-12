@@ -2,7 +2,16 @@ import re
 import pymupdf  # type: ignore  # noqa
 from pydantic import BaseModel
 
-from models import PenaltyInfo, TeamPenaltyInfo, RedzoneInfo, TeamRedzoneInfo
+from models import (
+    PenaltyInfo,
+    TeamPenaltyInfo,
+    RedzoneInfo,
+    TeamRedzoneInfo,
+    SeriesStatsInfo,
+    TeamSeriesStatsInfo,
+)
+from logger import logger
+from utils import open_pdf_to_list_only_page
 
 
 class ExtractedYards(BaseModel):
@@ -214,5 +223,69 @@ def get_redzone_info(
         ),
         visitor_team_redzone_info=RedzoneInfo(
             count=visitor_redzone_info[0], touchdown=visitor_redzone_info[1]
+        ),
+    )
+
+
+def get_series(
+    pdf_document: pymupdf.Document, team_list_in_file: list[str]
+) -> TeamSeriesStatsInfo:
+    home_score_count = 0
+    visitor_score_count = 0
+
+    start_home_drive_idx = None
+    end_home_drive_idx = None
+    start_visitor_drive_idx = None
+    end_visitor_drive_idx = None
+    drive_chart = open_pdf_to_list_only_page(pdf_document, 2)
+    for ct, line in enumerate(drive_chart):
+        if team_list_in_file[0] in line:
+            start_home_drive_idx = ct + 3
+        if team_list_in_file[1] in line:
+            end_home_drive_idx = ct - 1
+            start_visitor_drive_idx = ct + 3
+        if "攻撃時間" in line:
+            end_visitor_drive_idx = ct - 1
+            break
+    if start_home_drive_idx is None:
+        raise ValueError("ホームチームのドライブチャートが見つかりません")
+    if end_home_drive_idx is None:
+        raise ValueError("ホームチームのドライブチャートの終わり見つかりません")
+    if start_visitor_drive_idx is None:
+        raise ValueError("ビジターチームのドライブチャートが見つかりません")
+    if end_visitor_drive_idx is None:
+        raise ValueError("ビジターチームのドライブチャートの終わりが見つかりません")
+    logger.debug(
+        "start/end home drive idx %s/%s", start_home_drive_idx, end_home_drive_idx
+    )
+    logger.debug("start home line: %s", drive_chart[start_home_drive_idx])
+    logger.debug("end home line: %s", drive_chart[end_home_drive_idx])
+    logger.debug("start visitor drive idx %s", start_visitor_drive_idx)
+    logger.debug("start visitor line: %s", drive_chart[start_visitor_drive_idx])
+    logger.debug("end visitor drive idx %s", end_visitor_drive_idx)
+    logger.debug("end visitor line: %s", drive_chart[end_visitor_drive_idx])
+
+    def count_series_and_scores(start_idx, end_idx):
+        series_count = end_idx - start_idx + 1
+        score_count = sum(
+            1
+            for line in drive_chart[start_idx:end_idx]
+            if "TouchDown" in line or "FG Good" in line
+        )
+        return series_count, score_count
+
+    home_series_count, home_score_count = count_series_and_scores(
+        start_home_drive_idx, end_home_drive_idx
+    )
+    visitor_series_count, visitor_score_count = count_series_and_scores(
+        start_visitor_drive_idx, end_visitor_drive_idx
+    )
+
+    return TeamSeriesStatsInfo(
+        home_series_stats=SeriesStatsInfo(
+            series_count=home_series_count, score_count=home_score_count
+        ),
+        visitor_series_stats=SeriesStatsInfo(
+            series_count=visitor_series_count, score_count=visitor_score_count
         ),
     )

@@ -2,7 +2,7 @@ from pathlib import Path
 import click
 
 from logger import logger, set_log_level
-from logics import get_yards, get_redzone_info
+from logics import get_yards, get_redzone_info, get_series
 from break_team_stats import break_down_team_stats, get_third_down_info
 from models import Stats
 from utils import (
@@ -50,6 +50,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
     team_redzone_info = get_redzone_info(
         same_line_words_list, team_list_in_file, team_abbreviation_in_file
     )
+    team_series_info = get_series(pdf_document, team_list_in_file)
 
     for ct, (
         extracted_yards,
@@ -57,6 +58,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
         penalty_info,
         redzone_info,
         team_stats_info,
+        team_series_info,
     ) in enumerate(
         [
             (
@@ -65,6 +67,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
                 team_penalty_info.home_team_penalty_info,
                 team_redzone_info.home_team_redzone_info,
                 team_break_down_stats_info.home_team_break_down_stats,
+                team_series_info.home_series_stats,
             ),
             (
                 team_extracted_yards.visitor_team_extracted_yards,
@@ -72,6 +75,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
                 team_penalty_info.visitor_team_penalty_info,
                 team_redzone_info.visitor_team_redzone_info,
                 team_break_down_stats_info.visitor_team_break_down_stats,
+                team_series_info.visitor_series_stats,
             ),
         ]
     ):
@@ -83,6 +87,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
             penalty_info=penalty_info,
             redzone_info=redzone_info,
             team_stats_info=team_stats_info,
+            series_info=team_series_info,
             config=config,
         )
         logger.info(
