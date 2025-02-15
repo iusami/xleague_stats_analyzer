@@ -11,7 +11,7 @@ from models import (
     TeamSeriesStatsInfo,
 )
 from logger import logger
-from utils import open_pdf_to_list_only_page
+from utils import find_page_include_word, open_pdf_to_list_only_page
 
 
 class ExtractedYards(BaseModel):
@@ -234,7 +234,8 @@ def get_series(
     end_home_drive_idx = None
     start_visitor_drive_idx = None
     end_visitor_drive_idx = None
-    drive_chart = open_pdf_to_list_only_page(pdf_document, 2)
+    page_num = find_page_include_word(pdf_document, "ドライブチャート")
+    drive_chart = open_pdf_to_list_only_page(pdf_document, page_num)
     for ct, line in enumerate(drive_chart):
         if team_list_in_file[0] in line:
             start_home_drive_idx = ct + 3

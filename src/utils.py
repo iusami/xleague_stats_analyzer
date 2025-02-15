@@ -127,3 +127,12 @@ def export_stats_to_csv(stats: Stats, file_path: Path):
         writer = csv.DictWriter(csvfile, fieldnames=flat_stats.keys())
         writer.writeheader()
         writer.writerow(flat_stats)
+
+def find_page_include_word(pdf_document: pymupdf.Document, word: str):
+    for page_num in range(len(pdf_document)):
+        page = pdf_document.load_page(page_num)
+        words = page.get_text("words")
+        for w in words:
+            if word in w[4]:
+                return page_num
+    return -1
