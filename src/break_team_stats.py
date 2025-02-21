@@ -6,6 +6,8 @@ from models import (
     BreakDownStatsInfo,
     PassingAttempsInfo,
     TeamPassingAttemptsInfo,
+    FumbleInfo,
+    TeamFumbleInfo,
 )
 from logger import logger
 from utils import open_pdf_to_list_only_page
@@ -84,6 +86,27 @@ def extract_pass_attempts(same_line_words, stat_name) -> TeamPassingAttemptsInfo
             )
 
     raise ValueError(f"{stat_name}が見つかりませんでした。")
+
+
+def extract_fumble(same_line_words: list[str]) -> TeamFumbleInfo:
+    for line in same_line_words:
+        words = [word for word in line.split(" ") if word]
+        if "FUMBLE" in line:
+            logger.debug("%sが見つかりました。", "FUMBLE")
+            logger.debug(words)
+            home_fumble, home_lost = words[-2].split("-")
+            visitor_fumble, visitor_lost = words[-1].split("-")
+            return TeamFumbleInfo(
+                home_team_fumble_info=FumbleInfo(
+                    fumble=int(home_fumble),
+                    lost=int(home_lost),
+                ),
+                visitor_team_fumble_info=FumbleInfo(
+                    fumble=int(visitor_fumble),
+                    lost=int(visitor_lost),
+                ),
+            )
+    raise ValueError("FUMBLEが見つかりませんでした。")
 
 
 def break_down_team_stats(

@@ -70,12 +70,23 @@ class TeamSeriesStatsInfo(BaseModel):
     visitor_series_stats: SeriesStatsInfo
 
 
+class FumbleInfo(BaseModel):
+    fumble: int
+    lost: int
+
+
+class TeamFumbleInfo(BaseModel):
+    home_team_fumble_info: FumbleInfo
+    visitor_team_fumble_info: FumbleInfo
+
+
 class Stats(BaseModel):
     team_name: str
     run_yards: list[int]
     pass_yards: list[int]
     third_down_stats: ThirdDownStats
     penalty_info: PenaltyInfo
+    fumble_info: FumbleInfo
     redzone_info: RedzoneInfo
     team_stats_info: BreakDownStatsInfo
     series_info: SeriesStatsInfo
