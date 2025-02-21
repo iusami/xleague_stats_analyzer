@@ -32,7 +32,7 @@ def open_pdf_to_list(file_path: Path) -> list:
         words = page.get_text("words")
         tmp_same_line = []
         current_y0 = 0
-        margin = 10
+        margin = 3
         for word in words:
             if word[1] - current_y0 < margin:
                 tmp_same_line.append(word[4])
@@ -127,6 +127,7 @@ def export_stats_to_csv(stats: Stats, file_path: Path):
         writer = csv.DictWriter(csvfile, fieldnames=flat_stats.keys())
         writer.writeheader()
         writer.writerow(flat_stats)
+
 
 def find_page_include_word(pdf_document: pymupdf.Document, word: str):
     for page_num in range(len(pdf_document)):
