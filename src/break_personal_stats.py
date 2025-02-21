@@ -1,5 +1,5 @@
 import pymupdf
-from models import KickoffReturnInfo, TeamKickoffReturnInfo
+from models import KickoffReturnInfo, TeamKickoffReturnInfo, TeamPuntInfo, PuntInfo
 from logger import logger
 
 
@@ -39,12 +39,36 @@ def get_kick_off_return_stat(pdf_document: pymupdf.Document) -> TeamKickoffRetur
             visitor_return_yards = split_words[9]
             return TeamKickoffReturnInfo(
                 home_kickoff_return_info=KickoffReturnInfo(
-                    return_num=int(home_return_num),
-                    return_yards=int(home_return_yards)
+                    return_num=int(home_return_num), return_yards=int(home_return_yards)
                 ),
                 visitor_kickoff_return_info=KickoffReturnInfo(
                     return_num=int(visitor_return_num),
                     return_yards=int(visitor_return_yards),
+                ),
+            )
+    raise ValueError("KICKOFF RETURNS data not found")
+
+
+def get_punt_stat(pdf_document: pymupdf.Document) -> TeamPuntInfo:
+    same_line_words = get_personal_stats_page(pdf_document)
+    ko_idx = 0
+    for ct, word in enumerate(same_line_words):
+        if "PUNTING" in word:
+            ko_idx = ct
+    for word in same_line_words[ko_idx:]:
+        if "Total" in word:
+            split_words = word.split(" ")
+            home_return_num = split_words[1]
+            home_return_yards = split_words[2]
+            visitor_return_num = split_words[9]
+            visitor_return_yards = split_words[10]
+            return TeamPuntInfo(
+                home_punt_info=PuntInfo(
+                    punt_num=int(home_return_num), punt_yards=int(home_return_yards)
+                ),
+                visitor_punt_info=PuntInfo(
+                    punt_num=int(visitor_return_num),
+                    punt_yards=int(visitor_return_yards),
                 ),
             )
     raise ValueError("KICKOFF RETURNS data not found")

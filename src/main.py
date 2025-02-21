@@ -9,9 +9,7 @@ from break_team_stats import (
     extract_fumble,
     extract_score,
 )
-from break_personal_stats import (
-    get_kick_off_return_stat
-)
+from break_personal_stats import get_kick_off_return_stat, get_punt_stat
 from models import Stats
 from utils import (
     load_config_from_file,
@@ -64,6 +62,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
     score_tuple = extract_score(open_pdf_to_list_only_page(pdf_document, 0))
 
     team_kickoff_return_stats = get_kick_off_return_stat(pdf_document)
+    team_punt_stats = get_punt_stat(pdf_document)
     for ct, (
         extracted_yards,
         third_down_stats,
@@ -73,7 +72,8 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
         series_info,
         fumble_info,
         score,
-        kickoff_return_stats
+        kickoff_return_stats,
+        punt_stats,
     ) in enumerate(
         [
             (
@@ -85,7 +85,8 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
                 team_series_info.home_series_stats,
                 team_fumble_info.home_team_fumble_info,
                 score_tuple[0],
-                team_kickoff_return_stats.home_kickoff_return_info
+                team_kickoff_return_stats.home_kickoff_return_info,
+                team_punt_stats.home_punt_info,
             ),
             (
                 team_extracted_yards.visitor_team_extracted_yards,
@@ -96,7 +97,8 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
                 team_series_info.visitor_series_stats,
                 team_fumble_info.visitor_team_fumble_info,
                 score_tuple[1],
-                team_kickoff_return_stats.visitor_kickoff_return_info
+                team_kickoff_return_stats.visitor_kickoff_return_info,
+                team_punt_stats.visitor_punt_info,
             ),
         ]
     ):
@@ -111,7 +113,8 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
             team_stats_info=team_stats_info,
             series_info=series_info,
             config=config,
-            kickoff_return_stats=kickoff_return_stats
+            kickoff_return_stats=kickoff_return_stats,
+            punt_stats=punt_stats,
         )
         logger.info(
             "%s had %d runs greater than 15 yards.",
