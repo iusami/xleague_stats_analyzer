@@ -109,6 +109,24 @@ def extract_fumble(same_line_words: list[str]) -> TeamFumbleInfo:
     raise ValueError("FUMBLEが見つかりませんでした。")
 
 
+def extract_score(same_line_words: list[str]) -> tuple[int, int]:
+    home_score = None
+    visitor_score = None
+    for line in same_line_words:
+        words = [word for word in line.split(" ") if word]
+        if "ホーム" in line:
+            logger.debug("%sが見つかりました。", "得点")
+            logger.debug(words)
+            home_score = int(words[-1])
+        if "ビジター" in line:
+            logger.debug("%sが見つかりました。", "得点")
+            logger.debug(words)
+            visitor_score = int(words[-1])
+        if home_score is not None and visitor_score is not None:
+            return home_score, visitor_score
+    raise ValueError("得点が見つかりませんでした。")
+
+
 def break_down_team_stats(
     pdf_document: pymupdf.Document, team_name_list: list[str]
 ) -> TeamBreakDownStatsInfo:
