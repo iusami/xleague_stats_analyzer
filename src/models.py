@@ -82,6 +82,7 @@ class TeamFumbleInfo(BaseModel):
 
 class Stats(BaseModel):
     team_name: str
+    team_score: int
     run_yards: list[int]
     pass_yards: list[int]
     third_down_stats: ThirdDownStats

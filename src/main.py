@@ -3,13 +3,19 @@ import click
 
 from logger import logger, set_log_level
 from logics import get_yards, get_redzone_info, get_series
-from break_team_stats import break_down_team_stats, get_third_down_info, extract_fumble
+from break_team_stats import (
+    break_down_team_stats,
+    get_third_down_info,
+    extract_fumble,
+    extract_score,
+)
 from models import Stats
 from utils import (
     load_config_from_file,
     load_team_names_from_file,
     open_pdf,
     open_pdf_to_list,
+    open_pdf_to_list_only_page,
     export_stats_to_json,
     export_stats_to_csv,
 )
@@ -52,6 +58,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
     )
     team_series_info = get_series(pdf_document, team_list_in_file)
     team_fumble_info = extract_fumble(same_line_words_list)
+    score_tuple = extract_score(open_pdf_to_list_only_page(pdf_document, 0))
 
     for ct, (
         extracted_yards,
@@ -61,6 +68,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
         team_stats_info,
         series_info,
         fumble_info,
+        score,
     ) in enumerate(
         [
             (
@@ -71,6 +79,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
                 team_break_down_stats_info.home_team_break_down_stats,
                 team_series_info.home_series_stats,
                 team_fumble_info.home_team_fumble_info,
+                score_tuple[0],
             ),
             (
                 team_extracted_yards.visitor_team_extracted_yards,
@@ -80,11 +89,13 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
                 team_break_down_stats_info.visitor_team_break_down_stats,
                 team_series_info.visitor_series_stats,
                 team_fumble_info.visitor_team_fumble_info,
+                score_tuple[1],
             ),
         ]
     ):
         stats = Stats(
             team_name=extracted_yards.team_name,
+            team_score=score,
             run_yards=extracted_yards.rushing_yards,
             pass_yards=extracted_yards.passing_yards,
             third_down_stats=third_down_stats,
