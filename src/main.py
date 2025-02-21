@@ -94,7 +94,6 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
         ]
     ):
         stats = Stats(
-            team_name=extracted_yards.team_name,
             team_score=score,
             run_yards=extracted_yards.rushing_yards,
             pass_yards=extracted_yards.passing_yards,
@@ -108,28 +107,28 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
         )
         logger.info(
             "%s had %d runs greater than 15 yards.",
-            stats.team_name,
+            stats.team_stats_info.team_name,
             stats.big_run_count,
         )
         logger.info(
             "%s had %d passes greater than 20 yards.",
-            stats.team_name,
+            stats.team_stats_info.team_name,
             stats.big_pass_count,
         )
         logger.info(
             "%s had a third down conversion rate of %.2d%%.",
-            stats.team_name,
+            stats.team_stats_info.team_name,
             stats.third_down_success_rate,
         )
         logger.info(
             "%s did %d times penalty of %d yards.",
-            stats.team_name,
+            stats.team_stats_info.team_name,
             stats.penalty_info.count,
             stats.penalty_info.yards,
         )
         logger.info(
             "%s had %d redzone attempts and %d scores.",
-            stats.team_name,
+            stats.team_stats_info.team_name,
             stats.redzone_info.count,
             stats.redzone_info.touchdown,
         )
