@@ -80,6 +80,14 @@ class TeamFumbleInfo(BaseModel):
     home_team_fumble_info: FumbleInfo
     visitor_team_fumble_info: FumbleInfo
 
+class KickoffReturnInfo(BaseModel):
+    return_num: int
+    return_yards: int
+
+class TeamKickoffReturnInfo(BaseModel):
+    home_kickoff_return_info: KickoffReturnInfo
+    visitor_kickoff_return_info: KickoffReturnInfo
+
 
 class Stats(BaseModel):
     team_score: int
@@ -92,6 +100,7 @@ class Stats(BaseModel):
     team_stats_info: BreakDownStatsInfo
     series_info: SeriesStatsInfo
     config: Config
+    kickoff_return_stats: KickoffReturnInfo
     big_run_count: int = 0
     big_pass_count: int = 0
     third_down_success_rate: int = 0
