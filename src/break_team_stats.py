@@ -145,6 +145,7 @@ def break_down_team_stats(
     return TeamBreakDownStatsInfo(
         home_team_break_down_stats=BreakDownStatsInfo(
             team_name=home_team_name,
+            opponent_name=visitor_team_name,
             run_gain=home_run_gain,
             run_play=home_run_play,
             pass_gain=home_pass_gain,
@@ -152,6 +153,7 @@ def break_down_team_stats(
         ),
         visitor_team_break_down_stats=BreakDownStatsInfo(
             team_name=visitor_team_name,
+            opponent_name=home_team_name,
             run_gain=visitor_run_gain,
             run_play=visitor_run_play,
             pass_gain=visitor_pass_gain,

@@ -49,6 +49,7 @@ class TeamPassingAttemptsInfo(BaseModel):
 
 class BreakDownStatsInfo(BaseModel):
     team_name: str
+    opponent_name: str
     run_gain: int
     run_play: int
     pass_gain: int
@@ -81,7 +82,6 @@ class TeamFumbleInfo(BaseModel):
 
 
 class Stats(BaseModel):
-    team_name: str
     team_score: int
     run_yards: list[int]
     pass_yards: list[int]
