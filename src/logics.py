@@ -153,7 +153,8 @@ def extract_penalty_info(
         return home_penalty_info, visitor_penalty_info
     unit_parts = [part for part in unit.split(" ") if part]
     penalty_team = unit_parts[unit_parts.index("+Penalty") + 1]
-    if "ディクライン" not in unit:
+    if ("ディクライン" not in unit) and ("オフセット" not in unit):
+        logger.debug("penalty target: %s", unit)
         penalty_yards = re.compile(r"-?\d+y").findall(unit)[0].split("y")[0]
     else:
         penalty_yards = 0
@@ -287,3 +288,70 @@ def get_series(
             series_count=visitor_series_count, score_count=visitor_score_count
         ),
     )
+
+
+def get_fg_blocks(
+    same_line_words_list: list[str],
+    team_list_in_file: list[str],
+) -> tuple[int, int, int, int]:
+    home_fg_blocks = 0
+    home_fg_block_yards = 0
+    visitor_fg_blocks = 0
+    visitor_fg_block_yards = 0
+    team_mode = 0
+    search_format = re.compile(r"-?\d+y")
+    parse_keyword = "y"
+    play_by_play_idx = same_line_words_list.index("Play by Play First Quarter")
+    for unit in same_line_words_list[play_by_play_idx + 1 :]:
+        for word in unit.split(" "):
+            if word in team_list_in_file:
+                team_mode = team_list_in_file.index(word)
+        if "FG" not in unit:
+            continue
+        if "BLOCK" in unit:
+            matches = search_format.findall(unit)
+            if matches:
+                logger.debug(
+                    "FG trial yards %d", int(matches[0].split(parse_keyword)[0])
+                )
+                if team_mode == 0:
+                    home_fg_block_yards += int(matches[0].split(parse_keyword)[0])
+                    home_fg_blocks += 1
+                else:
+                    visitor_fg_block_yards += int(matches[0].split(parse_keyword)[0])
+                    visitor_fg_blocks += 1
+    return (
+        home_fg_blocks,
+        home_fg_block_yards,
+        visitor_fg_blocks,
+        visitor_fg_block_yards,
+    )
+
+
+def get_good_fg_trial_yards(
+    same_line_words_list: list[str],
+    team_list_in_file: list[str],
+) -> tuple[int, int]:
+    home_fg_trial_yards = 0
+    visitor_fg_trial_yards = 0
+    team_mode = 0
+    search_format = re.compile(r"-?\d+y")
+    parse_keyword = "y"
+    play_by_play_idx = same_line_words_list.index("Play by Play First Quarter")
+    for unit in same_line_words_list[play_by_play_idx + 1 :]:
+        for word in unit.split(" "):
+            if word in team_list_in_file:
+                team_mode = team_list_in_file.index(word)
+        if "FG" not in unit:
+            continue
+        if "GOOD" in unit:
+            matches = search_format.findall(unit)
+            if matches:
+                logger.debug(
+                    "FG trial yards %d", int(matches[0].split(parse_keyword)[0])
+                )
+                if team_mode == 0:
+                    home_fg_trial_yards += int(matches[0].split(parse_keyword)[0])
+                else:
+                    visitor_fg_trial_yards += int(matches[0].split(parse_keyword)[0])
+    return home_fg_trial_yards, visitor_fg_trial_yards

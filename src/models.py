@@ -101,6 +101,19 @@ class TeamPuntInfo(BaseModel):
     visitor_punt_info: PuntInfo
 
 
+class FGInfo(BaseModel):
+    fg_success: int
+    fg_blocks: int
+    fg_block_yards: int
+    fg_trials: int
+    fg_good_trial_yards: int
+
+
+class TeamFGInfo(BaseModel):
+    home_fg_info: FGInfo
+    visitor_fg_info: FGInfo
+
+
 class Stats(BaseModel):
     team_score: int
     run_yards: list[int]
@@ -114,6 +127,7 @@ class Stats(BaseModel):
     config: Config
     kickoff_return_stats: KickoffReturnInfo
     punt_stats: PuntInfo
+    fg_stats: FGInfo
     big_run_count: int = 0
     big_pass_count: int = 0
     third_down_success_rate: int = 0

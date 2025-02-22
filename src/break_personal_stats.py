@@ -1,6 +1,5 @@
 import pymupdf
 from models import KickoffReturnInfo, TeamKickoffReturnInfo, TeamPuntInfo, PuntInfo
-from logger import logger
 
 
 def get_personal_stats_page(pdf_document: pymupdf.Document):

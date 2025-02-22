@@ -8,6 +8,7 @@ from break_team_stats import (
     get_third_down_info,
     extract_fumble,
     extract_score,
+    extract_fg_stats,
 )
 from break_personal_stats import get_kick_off_return_stat, get_punt_stat
 from models import Stats
@@ -63,6 +64,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
 
     team_kickoff_return_stats = get_kick_off_return_stat(pdf_document)
     team_punt_stats = get_punt_stat(pdf_document)
+    team_fg_stats = extract_fg_stats(same_line_words_list, team_list_in_file)
     for ct, (
         extracted_yards,
         third_down_stats,
@@ -74,6 +76,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
         score,
         kickoff_return_stats,
         punt_stats,
+        fg_stats,
     ) in enumerate(
         [
             (
@@ -87,6 +90,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
                 score_tuple[0],
                 team_kickoff_return_stats.home_kickoff_return_info,
                 team_punt_stats.home_punt_info,
+                team_fg_stats.home_fg_info,
             ),
             (
                 team_extracted_yards.visitor_team_extracted_yards,
@@ -99,6 +103,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
                 score_tuple[1],
                 team_kickoff_return_stats.visitor_kickoff_return_info,
                 team_punt_stats.visitor_punt_info,
+                team_fg_stats.visitor_fg_info,
             ),
         ]
     ):
@@ -115,6 +120,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
             config=config,
             kickoff_return_stats=kickoff_return_stats,
             punt_stats=punt_stats,
+            fg_stats=fg_stats,
         )
         logger.info(
             "%s had %d runs greater than 15 yards.",

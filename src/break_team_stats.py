@@ -1,4 +1,5 @@
 import pymupdf  # type: ignore  # noqa
+from logics import get_fg_blocks, get_good_fg_trial_yards
 from models import (
     TeamBreakDownStatsInfo,
     ThirdDownStats,
@@ -8,6 +9,8 @@ from models import (
     TeamPassingAttemptsInfo,
     FumbleInfo,
     TeamFumbleInfo,
+    FGInfo,
+    TeamFGInfo,
 )
 from logger import logger
 from utils import open_pdf_to_list_only_page
@@ -107,6 +110,51 @@ def extract_fumble(same_line_words: list[str]) -> TeamFumbleInfo:
                 ),
             )
     raise ValueError("FUMBLEが見つかりませんでした。")
+
+
+def extract_fg_stats(
+    same_line_words: list[str], team_list_in_file: list[str]
+) -> TeamFGInfo:
+    home_fg = None
+    home_fg_success = None
+    visitor_fg = None
+    visitor_fg_success = None
+    for line in same_line_words:
+        words = [word for word in line.split(" ") if word]
+        if "Field Goal成功数" in line:
+            logger.debug("%sが見つかりました。", "FG")
+            logger.debug(words)
+            home_fg_success, home_fg = words[-2].split("-")
+            visitor_fg_success, visitor_fg = words[-1].split("-")
+    if (
+        home_fg is None
+        or visitor_fg is None
+        or home_fg_success is None
+        or visitor_fg_success is None
+    ):
+        raise ValueError("FGが見つかりませんでした。")
+    home_fg_blocks, home_fg_block_yards, visitor_fg_blocks, visitor_fg_block_yards = (
+        get_fg_blocks(same_line_words, team_list_in_file)
+    )
+    home_fg_trials, visitor_fg_trials = get_good_fg_trial_yards(
+        same_line_words, team_list_in_file
+    )
+    return TeamFGInfo(
+        home_fg_info=FGInfo(
+            fg_success=int(home_fg_success),
+            fg_blocks=int(home_fg_blocks),
+            fg_block_yards=int(home_fg_block_yards),
+            fg_trials=int(home_fg),
+            fg_good_trial_yards=int(home_fg_trials),
+        ),
+        visitor_fg_info=FGInfo(
+            fg_success=int(visitor_fg_success),
+            fg_blocks=int(visitor_fg_blocks),
+            fg_block_yards=int(visitor_fg_block_yards),
+            fg_trials=int(visitor_fg),
+            fg_good_trial_yards=int(visitor_fg_trials),
+        ),
+    )
 
 
 def extract_score(same_line_words: list[str]) -> tuple[int, int]:
