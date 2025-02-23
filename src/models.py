@@ -1,3 +1,5 @@
+import csv
+import json
 from pydantic import BaseModel
 
 
@@ -112,6 +114,60 @@ class FGInfo(BaseModel):
 class TeamFGInfo(BaseModel):
     home_fg_info: FGInfo
     visitor_fg_info: FGInfo
+
+
+class StartingFieldPosition(BaseModel):
+    field_position: list[dict[str, object]]
+
+    def save_as_json(self, file_path: str) -> None:
+        """
+        Saves the starting field position of the team as a JSON file.
+
+        Args:
+            file_path (str): The file path to save the JSON file.
+        """
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(
+                self.model_dump(),
+                f,
+                ensure_ascii=False,
+                indent=4,
+            )
+
+    def save_as_csv(self, file_path: str) -> None:
+        """
+        Saves the starting field position of the team as a CSV file.
+
+        Args:
+            file_path (str): The file path to save the CSV file.
+        """
+        with open(file_path, "w", encoding="utf-8") as f:
+            writer = csv.DictWriter(
+                f, fieldnames=["team_name", "field_position", "score"]
+            )
+            writer.writeheader()
+            for field_pos in self.field_position:
+                writer.writerow(field_pos)
+
+
+class TeamStartingFieldPosition(BaseModel):
+    home_team_starting_field_position: StartingFieldPosition
+    visitor_team_starting_field_position: StartingFieldPosition
+
+    def save_each_position_as_json(self, file_path: str) -> None:
+        """
+        Saves the starting field position of each team as a JSON file.
+
+        Args:
+            file_path (str): The file path to save the JSON file.
+        """
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(
+                self.model_dump(),
+                f,
+                ensure_ascii=False,
+                indent=4,
+            )
 
 
 class Stats(BaseModel):
