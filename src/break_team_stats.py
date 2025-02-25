@@ -14,6 +14,7 @@ from models import (
 )
 from logger import logger
 from utils import open_pdf_to_list_only_page
+import re
 
 
 def get_third_down_info(pdf_document: pymupdf.Document) -> TeamThirdDownStats:
@@ -209,21 +210,16 @@ def break_down_team_stats(
         ),
     )
 
-
 def get_home_visitor_team_name(team_name_list, same_line_words):
     home_team_name = None
     visitor_team_name = None
     for line in same_line_words:
-        if "ホーム" in line:
-            words = [word for word in line.split(" ") if word]
-            for team_name in team_name_list:
-                if team_name in words:
-                    home_team_name = team_name
-        if "ビジター" in line:
-            words = [word for word in line.split(" ") if word]
-            for team_name in team_name_list:
-                if team_name in words:
-                    visitor_team_name = team_name
+        if "vs" in line:
+            pattern = re.compile("|".join(re.escape(team) for team in team_name_list))
+            matches = pattern.findall(line)
+            if len(matches) == 2:
+                home_team_name, visitor_team_name = matches
+                break
     if home_team_name is None or visitor_team_name is None:
         raise ValueError("ホームチーム名またはビジターチーム名が見つかりませんでした。")
     return home_team_name, visitor_team_name

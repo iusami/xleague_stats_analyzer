@@ -3,7 +3,7 @@ import click
 
 from logger import logger, set_log_level
 from logics import get_yards, get_redzone_info, get_series
-from break_drive_chart import get_stating_field_position
+from break_drive_chart import get_starting_field_position
 from break_team_stats import (
     break_down_team_stats,
     get_third_down_info,
@@ -46,6 +46,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
         team_break_down_stats_info.home_team_break_down_stats.team_name,
         team_break_down_stats_info.visitor_team_break_down_stats.team_name,
     ]
+    logger.info("Team names: %s", team_list_in_file)
     team_abbreviation_in_file = [
         team_abbreviation_by_team_dict[team] for team in team_list_in_file
     ]
@@ -66,7 +67,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
     team_kickoff_return_stats = get_kick_off_return_stat(pdf_document)
     team_punt_stats = get_punt_stat(pdf_document)
     team_fg_stats = extract_fg_stats(same_line_words_list, team_list_in_file)
-    team_starting_field_position = get_stating_field_position(
+    team_starting_field_position = get_starting_field_position(
         pdf_document, team_list_in_file, team_abbreviation_in_file
     )
     # team_starting_field_position.save_each_position_as_json("field_position.json")

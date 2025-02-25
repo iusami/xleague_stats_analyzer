@@ -253,7 +253,7 @@ def get_series(
     if start_visitor_drive_idx is None:
         raise ValueError("ビジターチームのドライブチャートが見つかりません")
     if end_visitor_drive_idx is None:
-        raise ValueError("ビジターチームのドライブチャートの終わりが見つかりません")
+        end_visitor_drive_idx = -1
     logger.debug(
         "start/end home drive idx %s/%s", start_home_drive_idx, end_home_drive_idx
     )
