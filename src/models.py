@@ -1,5 +1,6 @@
 import csv
 import json
+from pathlib import Path
 from pydantic import BaseModel
 
 
@@ -119,7 +120,7 @@ class TeamFGInfo(BaseModel):
 class StartingFieldPosition(BaseModel):
     field_position: list[dict[str, object]]
 
-    def save_as_json(self, file_path: str) -> None:
+    def save_as_json(self, file_path: Path) -> None:
         """
         Saves the starting field position of the team as a JSON file.
 
@@ -134,7 +135,7 @@ class StartingFieldPosition(BaseModel):
                 indent=4,
             )
 
-    def save_as_csv(self, file_path: str) -> None:
+    def save_as_csv(self, file_path: Path) -> None:
         """
         Saves the starting field position of the team as a CSV file.
 

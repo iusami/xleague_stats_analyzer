@@ -17,7 +17,7 @@
             "abbreviation": "NR"
         },
         {
-            "name":"IBM BIG BLUE",
+            "name":"IBM",
             "abbreviation": "BB"
         },
         {
@@ -31,6 +31,22 @@
         {
             "name":"エレコム神戸ファイニーズ",
             "abbreviation": "EF"
+        },
+        {
+            "name":"PLEIADES福岡SUNS",
+            "abbreviation": "PF"
+        },
+        {
+            "name":"オール三菱ライオンズ",
+            "abbreviation":"ML"
+        },
+        {
+            "name":"オリエンタルバイオシルバースター",
+            "abbreviation":"SS"
+        },
+        {
+            "name":"富士フイルム海老名Minerva",
+            "abbreviation":"FM"
         }
     ],
     "abbreviation": {
@@ -38,19 +54,27 @@
         "PI": "パナソニックインパルス",
         "OS": "オービックシーガルズ",
         "NR": "ノジマ相模原ライズ",
-        "BB": "IBM BIG BLUE",
+        "BB": "IBM",
         "SC": "SEKISUIチャレンジャーズ",
         "TG": "東京ガスクリエイターズ",
-        "EF": "エレコム神戸ファイニーズ"
+        "EF": "エレコム神戸ファイニーズ",
+        "PF": "PLEIADES福岡SUNS",
+        "ML": "オール三菱ライオンズ",
+        "SS": "オリエンタルバイオシルバースター",
+        "FM": "富士フイルム海老名Minerva"
     },
     "abbreviation_by_team": {
         "富士通フロンティアーズ": "FF",
         "パナソニックインパルス": "PI",
         "オービックシーガルズ": "OS",
         "ノジマ相模原ライズ": "NR",
-        "IBM BIG BLUE": "BB",
+        "IBM": "BB",
         "SEKISUIチャレンジャーズ": "SC",
         "東京ガスクリエイターズ": "TG",
-        "エレコム神戸ファイニーズ": "EF"
+        "エレコム神戸ファイニーズ": "EF",
+        "PLEIADES福岡SUNS": "PF",
+        "オール三菱ライオンズ": "ML",
+        "オリエンタルバイオシルバースター": "SS",
+        "富士フイルム海老名Minerva": "FM"
     }
 }
