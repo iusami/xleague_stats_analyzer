@@ -40,6 +40,7 @@ def open_pdf_to_list(file_path: Path) -> list:
                 same_line_words.append(" ".join(tmp_same_line))
                 tmp_same_line = [word[4]]
                 current_y0 = word[1]
+    same_line_words.append(" ".join(tmp_same_line))
     return same_line_words
 
 
@@ -57,6 +58,7 @@ def open_pdf_to_list_only_page(pdf_document: pymupdf.Document, page_num: int) ->
             same_line_words.append(" ".join(tmp_same_line))
             tmp_same_line = [word[4]]
             current_y0 = word[1]
+    same_line_words.append(" ".join(tmp_same_line))
     return same_line_words
 
 
