@@ -85,5 +85,3 @@ def get_starting_field_position(
             field_position=visitor_field_position_dict_list,
         ),
     )
-
-    # raise ValueError("Starting Field Position data not found")
