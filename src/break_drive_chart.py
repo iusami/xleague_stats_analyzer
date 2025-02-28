@@ -1,7 +1,6 @@
 import pymupdf
 from logger import logger
 from models import TeamStartingFieldPosition, StartingFieldPosition
-import re
 
 
 def get_drive_chart_page(pdf_document: pymupdf.Document):

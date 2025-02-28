@@ -1,9 +1,8 @@
 from pathlib import Path
 import click
-import os
 
 from logger import logger, set_log_level
-from logics import get_yards, get_redzone_info, get_series
+from logics import get_kicking_score, get_yards, get_redzone_info, get_series
 from break_drive_chart import get_starting_field_position
 from break_team_stats import (
     break_down_team_stats,
@@ -11,7 +10,7 @@ from break_team_stats import (
     extract_fumble,
     extract_score,
     extract_fg_stats,
-    extract_time_possession
+    extract_time_possession,
 )
 from break_personal_stats import get_kick_off_return_stat, get_punt_stat
 from models import Stats
@@ -52,7 +51,9 @@ def main(pdf_dir: Path, config_path: Path, output_dir: Path, log_level: str):
         logger.debug("pdf_path: %s", pdf_path)
         pdf_document = open_pdf(pdf_path)
         same_line_words_list = open_pdf_to_list(pdf_path)
-        team_break_down_stats_info = break_down_team_stats(pdf_document, team_names_list)
+        team_break_down_stats_info = break_down_team_stats(
+            pdf_document, team_names_list
+        )
         team_list_in_file = [
             team_break_down_stats_info.home_team_break_down_stats.team_name,
             team_break_down_stats_info.visitor_team_break_down_stats.team_name,
@@ -73,11 +74,14 @@ def main(pdf_dir: Path, config_path: Path, output_dir: Path, log_level: str):
         team_series_info = get_series(pdf_document, team_list_in_file)
         team_fumble_info = extract_fumble(same_line_words_list)
         score_tuple = extract_score(open_pdf_to_list_only_page(pdf_document, 0))
+        kicking_score_tuple = get_kicking_score(same_line_words_list, team_list_in_file)
 
         team_kickoff_return_stats = get_kick_off_return_stat(pdf_document)
         team_punt_stats = get_punt_stat(pdf_document)
         team_fg_stats = extract_fg_stats(same_line_words_list, team_list_in_file)
-        team_time_possession = extract_time_possession(open_pdf_to_list_only_page(pdf_document, 0))
+        team_time_possession = extract_time_possession(
+            open_pdf_to_list_only_page(pdf_document, 0)
+        )
         team_starting_field_position = get_starting_field_position(
             pdf_document, team_list_in_file, team_abbreviation_in_file
         )
@@ -97,10 +101,11 @@ def main(pdf_dir: Path, config_path: Path, output_dir: Path, log_level: str):
             series_info,
             fumble_info,
             score,
+            kicking_score,
             kickoff_return_stats,
             punt_stats,
             fg_stats,
-            time_possession
+            time_possession,
         ) in enumerate(
             [
                 (
@@ -112,10 +117,11 @@ def main(pdf_dir: Path, config_path: Path, output_dir: Path, log_level: str):
                     team_series_info.home_series_stats,
                     team_fumble_info.home_team_fumble_info,
                     score_tuple[0],
+                    kicking_score_tuple[0],
                     team_kickoff_return_stats.home_kickoff_return_info,
                     team_punt_stats.home_punt_info,
                     team_fg_stats.home_fg_info,
-                    team_time_possession.home_team_time_possession
+                    team_time_possession.home_team_time_possession,
                 ),
                 (
                     team_extracted_yards.visitor_team_extracted_yards,
@@ -126,15 +132,17 @@ def main(pdf_dir: Path, config_path: Path, output_dir: Path, log_level: str):
                     team_series_info.visitor_series_stats,
                     team_fumble_info.visitor_team_fumble_info,
                     score_tuple[1],
+                    kicking_score_tuple[1],
                     team_kickoff_return_stats.visitor_kickoff_return_info,
                     team_punt_stats.visitor_punt_info,
                     team_fg_stats.visitor_fg_info,
-                    team_time_possession.visitor_team_time_possession
+                    team_time_possession.visitor_team_time_possession,
                 ),
             ]
         ):
             stats = Stats(
                 team_score=score,
+                offense_score=score - kicking_score,
                 run_yards=extracted_yards.rushing_yards,
                 pass_yards=extracted_yards.passing_yards,
                 third_down_stats=third_down_stats,
@@ -147,7 +155,7 @@ def main(pdf_dir: Path, config_path: Path, output_dir: Path, log_level: str):
                 kickoff_return_stats=kickoff_return_stats,
                 punt_stats=punt_stats,
                 fg_stats=fg_stats,
-                time_possession=time_possession
+                time_possession=time_possession,
             )
             logger.info(
                 "%s had %d runs greater than 15 yards.",

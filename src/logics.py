@@ -355,3 +355,31 @@ def get_good_fg_trial_yards(
                 else:
                     visitor_fg_trial_yards += int(matches[0].split(parse_keyword)[0])
     return home_fg_trial_yards, visitor_fg_trial_yards
+
+
+def get_kicking_score(
+    same_line_words_list: list[str],
+    team_list_in_file: list[str],
+) -> tuple[int, int]:
+    home_kicking_touchdown = 0
+    visitor_kicking_touchdown = 0
+    team_mode = 0
+    play_by_play_idx = same_line_words_list.index("Play by Play First Quarter")
+    for unit in same_line_words_list[play_by_play_idx + 1 :]:
+        for word in unit.split(" "):
+            if word in team_list_in_file:
+                team_mode = team_list_in_file.index(word)
+        if "Kick-off" not in unit and "PUNT" not in unit:
+            continue
+        if "Lineups" in unit:
+            break
+        if "TOUCHDOWN" in unit:
+            if team_mode == 0:
+                home_kicking_touchdown += 7
+            else:
+                visitor_kicking_touchdown += 7
+    logger.debug("\033[43mhome_kicking_touchdown: %d \033[0m", home_kicking_touchdown)
+    logger.debug(
+        "\033[43mvisitor_kicking_touchdown: %d \033[0m", visitor_kicking_touchdown
+    )
+    return home_kicking_touchdown, visitor_kicking_touchdown
