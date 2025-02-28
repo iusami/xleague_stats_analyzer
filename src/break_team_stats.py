@@ -13,6 +13,8 @@ from models import (
     TeamFGInfo,
     TimePossession,
     TeamTimePossession,
+    PRInfo,
+    TeamPRInfo,
 )
 from logger import logger
 from utils import open_pdf_to_list_only_page
@@ -251,9 +253,11 @@ def extract_time_possession(same_line_words) -> TeamTimePossession:
     raise ValueError("攻撃時間が見つかりませんでした。")
 
 
-def extract_pr_yards(same_line_words: list[str]) -> tuple[int, int]:
+def extract_pr_yards(same_line_words: list[str]) -> TeamPRInfo:
     home_pr_yards = None
+    home_pr_counts = None
     visitor_pr_yards = None
+    visitor_pr_counts = None
     for line in same_line_words:
         words = [word for word in line.split(" ") if word]
         if "PUNTリターン" in line:
@@ -261,12 +265,28 @@ def extract_pr_yards(same_line_words: list[str]) -> tuple[int, int]:
             logger.debug(words)
             if "--" in words[-2]:
                 home_pr_yards = int("-" + words[-2].split("--")[1])
+                home_pr_counts = int(words[-2].split("--")[0])
             else:
                 home_pr_yards = int(words[-2].split("-")[1])
+                home_pr_counts = int(words[-2].split("-")[0])
             if "--" in words[-1]:
                 visitor_pr_yards = int("-" + words[-1].split("--")[1])
+                visitor_pr_counts = int(words[-1].split("--")[0])
             else:
                 visitor_pr_yards = int(words[-1].split("-")[1])
-        if home_pr_yards is not None and visitor_pr_yards is not None:
-            return home_pr_yards, visitor_pr_yards
+                visitor_pr_counts = int(words[-1].split("-")[0])
+        if (
+            home_pr_yards is not None
+            and home_pr_counts is not None
+            and visitor_pr_yards is not None
+            and visitor_pr_counts is not None
+        ):
+            return TeamPRInfo(
+                home_team_PRInfo=PRInfo(
+                    return_num=home_pr_counts, return_yards=home_pr_yards
+                ),
+                visitor_team_PRInfo=PRInfo(
+                    return_num=visitor_pr_counts, return_yards=visitor_pr_yards
+                ),
+            )
     raise ValueError("PRヤード数が見つかりませんでした。")

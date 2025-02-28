@@ -73,7 +73,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
     team_time_possession = extract_time_possession(
         open_pdf_to_list_only_page(pdf_document, 0)
     )
-    pr_tuple = extract_pr_yards(open_pdf_to_list_only_page(pdf_document, 0))
+    team_pr_info = extract_pr_yards(open_pdf_to_list_only_page(pdf_document, 0))
     team_starting_field_position = get_starting_field_position(
         pdf_document, team_list_in_file, team_abbreviation_in_file
     )
@@ -105,7 +105,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
         punt_stats,
         fg_stats,
         time_possession,
-        pr_yards,
+        pr_info,
     ) in enumerate(
         [
             (
@@ -122,7 +122,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
                 team_punt_stats.home_punt_info,
                 team_fg_stats.home_fg_info,
                 team_time_possession.home_team_time_possession,
-                pr_tuple[0],
+                team_pr_info.home_team_PRInfo
             ),
             (
                 team_extracted_yards.visitor_team_extracted_yards,
@@ -138,7 +138,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
                 team_punt_stats.visitor_punt_info,
                 team_fg_stats.visitor_fg_info,
                 team_time_possession.visitor_team_time_possession,
-                pr_tuple[1],
+                team_pr_info.visitor_team_PRInfo
             ),
         ]
     ):
@@ -158,7 +158,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
             punt_stats=punt_stats,
             fg_stats=fg_stats,
             time_possession=time_possession,
-            pr_yards=pr_yards,
+            pr_info=pr_info
         )
         logger.info(
             "%s had %d runs greater than 15 yards.",
