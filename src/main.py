@@ -11,6 +11,7 @@ from break_team_stats import (
     extract_score,
     extract_fg_stats,
     extract_time_possession,
+    extract_pr_yards,
 )
 from break_personal_stats import get_kick_off_return_stat, get_punt_stat
 from models import Stats
@@ -72,6 +73,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
     team_time_possession = extract_time_possession(
         open_pdf_to_list_only_page(pdf_document, 0)
     )
+    pr_tuple = extract_pr_yards(open_pdf_to_list_only_page(pdf_document, 0))
     team_starting_field_position = get_starting_field_position(
         pdf_document, team_list_in_file, team_abbreviation_in_file
     )
@@ -103,6 +105,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
         punt_stats,
         fg_stats,
         time_possession,
+        pr_yards,
     ) in enumerate(
         [
             (
@@ -119,6 +122,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
                 team_punt_stats.home_punt_info,
                 team_fg_stats.home_fg_info,
                 team_time_possession.home_team_time_possession,
+                pr_tuple[0],
             ),
             (
                 team_extracted_yards.visitor_team_extracted_yards,
@@ -134,6 +138,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
                 team_punt_stats.visitor_punt_info,
                 team_fg_stats.visitor_fg_info,
                 team_time_possession.visitor_team_time_possession,
+                pr_tuple[1],
             ),
         ]
     ):
@@ -153,6 +158,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
             punt_stats=punt_stats,
             fg_stats=fg_stats,
             time_possession=time_possession,
+            pr_yards=pr_yards,
         )
         logger.info(
             "%s had %d runs greater than 15 yards.",
