@@ -11,6 +11,8 @@ from models import (
     TeamFumbleInfo,
     FGInfo,
     TeamFGInfo,
+    TimePossession,
+    TeamTimePossession,
 )
 from logger import logger
 from utils import open_pdf_to_list_only_page
@@ -223,3 +225,23 @@ def get_home_visitor_team_name(team_name_list, same_line_words):
     if home_team_name is None or visitor_team_name is None:
         raise ValueError("ホームチーム名またはビジターチーム名が見つかりませんでした。")
     return home_team_name, visitor_team_name
+
+def extract_time_possession(same_line_words) -> TeamTimePossession:
+    for line in same_line_words:
+        words = [word for word in line.split(" ") if word]
+        if "攻撃時間"  in line:
+            logger.debug("%sが見つかりました。", "攻撃時間")
+            logger.debug(words)
+            home_possession_time_min, home_possession_time_sec = words[-2].split(":")
+            visitor_possession_time_min, visitor_possession_time_sec = words[-1].split(":")
+            return TeamTimePossession(
+                home_team_time_possession=TimePossession(
+                    minutes=int(home_possession_time_min),
+                    seconds=int(home_possession_time_sec),
+                ),
+                visitor_team_time_possession=TimePossession(
+                    minutes=int(visitor_possession_time_min),
+                    seconds=int(visitor_possession_time_sec),
+                ),
+            )
+    raise ValueError("攻撃時間が見つかりませんでした。")

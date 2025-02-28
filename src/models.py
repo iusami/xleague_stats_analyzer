@@ -170,6 +170,12 @@ class TeamStartingFieldPosition(BaseModel):
                 indent=4,
             )
 
+class TimePossession(BaseModel):
+    minutes: int
+    seconds: int
+class TeamTimePossession(BaseModel):
+    home_team_time_possession: TimePossession
+    visitor_team_time_possession: TimePossession    
 
 class Stats(BaseModel):
     team_score: int
@@ -185,6 +191,7 @@ class Stats(BaseModel):
     kickoff_return_stats: KickoffReturnInfo
     punt_stats: PuntInfo
     fg_stats: FGInfo
+    time_possession: TimePossession
     big_run_count: int = 0
     big_pass_count: int = 0
     third_down_success_rate: int = 0

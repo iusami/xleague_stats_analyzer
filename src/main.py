@@ -10,6 +10,7 @@ from break_team_stats import (
     extract_fumble,
     extract_score,
     extract_fg_stats,
+    extract_time_possession
 )
 from break_personal_stats import get_kick_off_return_stat, get_punt_stat
 from models import Stats
@@ -67,21 +68,22 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
     team_kickoff_return_stats = get_kick_off_return_stat(pdf_document)
     team_punt_stats = get_punt_stat(pdf_document)
     team_fg_stats = extract_fg_stats(same_line_words_list, team_list_in_file)
+    team_time_possession = extract_time_possession(open_pdf_to_list_only_page(pdf_document, 0))
     team_starting_field_position = get_starting_field_position(
         pdf_document, team_list_in_file, team_abbreviation_in_file
     )
     # team_starting_field_position.save_each_position_as_json("field_position.json")
     team_starting_field_position.home_team_starting_field_position.save_as_json(
-        "home_field_position.json"
+        Path("home_field_position.json")
     )
     team_starting_field_position.home_team_starting_field_position.save_as_csv(
-        "home_field_position.csv"
+        Path("home_field_position.csv")
     )
     team_starting_field_position.visitor_team_starting_field_position.save_as_json(
-        "visitor_field_position.json"
+        Path("visitor_field_position.json")
     )
     team_starting_field_position.visitor_team_starting_field_position.save_as_csv(
-        "visitor_field_position.csv"
+        Path("visitor_field_position.csv")
     )
     logger.debug("team_starting_field_position: %s", team_starting_field_position)
     for ct, (
@@ -96,6 +98,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
         kickoff_return_stats,
         punt_stats,
         fg_stats,
+        time_possession
     ) in enumerate(
         [
             (
@@ -110,6 +113,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
                 team_kickoff_return_stats.home_kickoff_return_info,
                 team_punt_stats.home_punt_info,
                 team_fg_stats.home_fg_info,
+                team_time_possession.home_team_time_possession
             ),
             (
                 team_extracted_yards.visitor_team_extracted_yards,
@@ -123,6 +127,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
                 team_kickoff_return_stats.visitor_kickoff_return_info,
                 team_punt_stats.visitor_punt_info,
                 team_fg_stats.visitor_fg_info,
+                team_time_possession.visitor_team_time_possession   
             ),
         ]
     ):
@@ -140,6 +145,7 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
             kickoff_return_stats=kickoff_return_stats,
             punt_stats=punt_stats,
             fg_stats=fg_stats,
+            time_possession=time_possession
         )
         logger.info(
             "%s had %d runs greater than 15 yards.",
