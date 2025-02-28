@@ -170,15 +170,20 @@ class TeamStartingFieldPosition(BaseModel):
                 indent=4,
             )
 
+
 class TimePossession(BaseModel):
     minutes: int
     seconds: int
+
+
 class TeamTimePossession(BaseModel):
     home_team_time_possession: TimePossession
-    visitor_team_time_possession: TimePossession    
+    visitor_team_time_possession: TimePossession
+
 
 class Stats(BaseModel):
     team_score: int
+    offense_score: int
     run_yards: list[int]
     pass_yards: list[int]
     third_down_stats: ThirdDownStats
