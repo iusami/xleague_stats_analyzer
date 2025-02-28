@@ -197,6 +197,7 @@ class Stats(BaseModel):
     punt_stats: PuntInfo
     fg_stats: FGInfo
     time_possession: TimePossession
+    pr_yards: int
     big_run_count: int = 0
     big_pass_count: int = 0
     third_down_success_rate: int = 0

@@ -249,3 +249,24 @@ def extract_time_possession(same_line_words) -> TeamTimePossession:
                 ),
             )
     raise ValueError("攻撃時間が見つかりませんでした。")
+
+
+def extract_pr_yards(same_line_words: list[str]) -> tuple[int, int]:
+    home_pr_yards = None
+    visitor_pr_yards = None
+    for line in same_line_words:
+        words = [word for word in line.split(" ") if word]
+        if "PUNTリターン" in line:
+            logger.debug("%sが見つかりました。", "PR")
+            logger.debug(words)
+            if "--" in words[-2]:
+                home_pr_yards = int("-" + words[-2].split("--")[1])
+            else:
+                home_pr_yards = int(words[-2].split("-")[1])
+            if "--" in words[-1]:
+                visitor_pr_yards = int("-" + words[-1].split("--")[1])
+            else:
+                visitor_pr_yards = int(words[-1].split("-")[1])
+        if home_pr_yards is not None and visitor_pr_yards is not None:
+            return home_pr_yards, visitor_pr_yards
+    raise ValueError("PRヤード数が見つかりませんでした。")
