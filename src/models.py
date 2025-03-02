@@ -181,6 +181,16 @@ class TeamTimePossession(BaseModel):
     visitor_team_time_possession: TimePossession
 
 
+class PRInfo(BaseModel):
+    return_num: int
+    return_yards: int
+
+
+class TeamPRInfo(BaseModel):
+    home_team_PRInfo: PRInfo
+    visitor_team_PRInfo: PRInfo
+
+
 class Stats(BaseModel):
     team_score: int
     offense_score: int
@@ -197,7 +207,7 @@ class Stats(BaseModel):
     punt_stats: PuntInfo
     fg_stats: FGInfo
     time_possession: TimePossession
-    pr_yards: int
+    pr_info: PRInfo
     big_run_count: int = 0
     big_pass_count: int = 0
     third_down_success_rate: int = 0
