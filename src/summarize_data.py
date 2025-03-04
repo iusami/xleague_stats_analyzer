@@ -221,7 +221,12 @@ def process_team_data(df: pl.DataFrame):
 
     # "パス成功率"を計算して列を追加
     df_stats = df_stats.with_columns(
-        [(pl.col("パス成功数") / pl.col("パス試行数") * 100).round(0).cast(int).alias("パス成功率")]
+        [
+            (pl.col("パス成功数") / pl.col("パス試行数") * 100)
+            .round(0)
+            .cast(int)
+            .alias("パス成功率")
+        ]
     )
 
     # ポゼッション時間(分)から、試合平均ポゼッション時間(分)を計算
