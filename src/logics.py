@@ -375,9 +375,9 @@ def get_kicking_score(
             break
         if "TOUCHDOWN" in unit:
             if team_mode == 0:
-                home_kicking_touchdown += 7
-            else:
                 visitor_kicking_touchdown += 7
+            else:
+                home_kicking_touchdown += 7
     logger.debug("\033[43mhome_kicking_touchdown: %d \033[0m", home_kicking_touchdown)
     logger.debug(
         "\033[43mvisitor_kicking_touchdown: %d \033[0m", visitor_kicking_touchdown
