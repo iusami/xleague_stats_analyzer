@@ -125,7 +125,7 @@ def main(pdf_dir: Path, config_path: Path, output_dir: Path, log_level: str):
                     team_punt_stats.home_punt_info,
                     team_fg_stats.home_fg_info,
                     team_time_possession.home_team_time_possession,
-                    team_pr_info.home_team_PRInfo
+                    team_pr_info.home_team_PRInfo,
                 ),
                 (
                     team_extracted_yards.visitor_team_extracted_yards,
@@ -141,7 +141,7 @@ def main(pdf_dir: Path, config_path: Path, output_dir: Path, log_level: str):
                     team_punt_stats.visitor_punt_info,
                     team_fg_stats.visitor_fg_info,
                     team_time_possession.visitor_team_time_possession,
-                    team_pr_info.visitor_team_PRInfo
+                    team_pr_info.visitor_team_PRInfo,
                 ),
             ]
         ):
@@ -161,7 +161,7 @@ def main(pdf_dir: Path, config_path: Path, output_dir: Path, log_level: str):
                 punt_stats=punt_stats,
                 fg_stats=fg_stats,
                 time_possession=time_possession,
-                pr_info=pr_info
+                pr_info=pr_info,
             )
             logger.info(
                 "%s had %d runs greater than 15 yards.",
