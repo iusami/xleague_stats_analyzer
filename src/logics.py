@@ -173,8 +173,16 @@ def get_redzone_info(
     team_abbreviation_in_file: list[str],
 ) -> TeamRedzoneInfo:
     team_mode = 0
-    home_redzone_info = [0, 0]
-    visitor_redzone_info = [0, 0]
+    home_redzone_play_count = 0
+    home_redzone_score_fg_count = 0
+    home_redzone_td_count = 0
+    tmp_home_redzone_count = 0
+    home_redzone_series_count = 0
+    visitor_redzone_play_count = 0
+    visitor_redzone_score_fg_count = 0
+    visitor_redzone_td_count = 0
+    tmp_visitor_redzone_count = 0
+    visitor_redzone_series_count = 0
     play_by_play_idx = same_line_words_list.index("Play by Play First Quarter")
     for unit in same_line_words_list[play_by_play_idx + 1 :]:
         for word in unit.split(" "):
@@ -198,32 +206,44 @@ def get_redzone_info(
             continue
         field_position = int(unit_split[team_idx + 1])
         if (field_position > 25) or (unit_split[team_idx] == offense_team):
+            if tmp_home_redzone_count > 0:
+                home_redzone_series_count += 1
+                tmp_home_redzone_count = 0
+            if tmp_visitor_redzone_count:
+                visitor_redzone_series_count += 1
+                tmp_visitor_redzone_count = 0
             continue
         if "Lineups" in unit:
             break
         if team_mode == 0:
-            home_redzone_info[0] += 1
+            home_redzone_play_count += 1
+            tmp_home_redzone_count += 1
             # Touchdownはプレーカウントとスコアをカウント
             if "TOUCHDOWN" in unit:
-                home_redzone_info[1] += 1
+                home_redzone_td_count += 1
             # FGはスコアのみカウント
             if "FG" in unit and "GOOD" in unit:
-                home_redzone_info[0] -= 1
-                home_redzone_info[1] += 1
+                home_redzone_score_fg_count += 1
         else:
-            visitor_redzone_info[0] += 1
+            visitor_redzone_play_count += 1
+            tmp_visitor_redzone_count += 1
             if "TOUCHDOWN" in unit:
-                visitor_redzone_info[1] += 1
+                visitor_redzone_td_count += 1
             if "FG" in unit and "GOOD" in unit:
-                visitor_redzone_info[0] -= 1
-                visitor_redzone_info[1] += 1
+                visitor_redzone_score_fg_count += 1
 
     return TeamRedzoneInfo(
         home_team_redzone_info=RedzoneInfo(
-            count=home_redzone_info[0], touchdown=home_redzone_info[1]
+            play_count=home_redzone_play_count,
+            fg_score_count=home_redzone_score_fg_count,
+            touchdown_count=home_redzone_td_count,
+            series_count=home_redzone_series_count,
         ),
         visitor_team_redzone_info=RedzoneInfo(
-            count=visitor_redzone_info[0], touchdown=visitor_redzone_info[1]
+            play_count=visitor_redzone_play_count,
+            fg_score_count=visitor_redzone_score_fg_count,
+            touchdown_count=visitor_redzone_td_count,
+            series_count=visitor_redzone_series_count,
         ),
     )
 

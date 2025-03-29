@@ -14,8 +14,10 @@ column_mapping = {
     "penalty_info_yards": "反則ヤード",
     "fumble_info_fumble": "ファンブル回数",
     "fumble_info_lost": "ファンブルロスト回数",
-    "redzone_info_count": "レッドゾーン攻撃回数",
-    "redzone_info_touchdown": "レッドゾーンTD数",
+    "redzone_info_play_count": "レッドゾーン攻撃回数",
+    "redzone_info_touchdown_count": "レッドゾーンTD数",
+    "redzone_info_fg_score_count": "レッドゾーンFG成功数",
+    "redzone_info_series_count": "レッドゾーンシリーズ回数",
     "team_stats_info_team_name": "チーム名",
     "team_stats_info_opponent_name": "相手チーム名",
     "team_stats_info_run_gain": "ラン獲得ヤード",
@@ -47,6 +49,7 @@ column_mapping = {
 # カラムの順番を指定するリスト
 column_order = [
     "チーム名",
+    "試合回数",
     "得点",
     "攻撃得点",
     "1試合あたりの平均攻撃得点",
@@ -72,12 +75,16 @@ column_order = [
     "3rdダウン成功数",
     "3rdダウン試行数",
     "3rdダウン成功率",
+    "試合平均3rdダウン試行数",
     "反則回数",
     "反則ヤード",
     "ファンブル回数",
     "ファンブルロスト回数",
     "レッドゾーン攻撃回数",
     "レッドゾーンTD数",
+    "レッドゾーンFG成功数",
+    "レッドゾーンシリーズ回数",
+    "レッドゾーンTD率",
     "レッドゾーンスコア率",
     "シリーズ数",
     "シリーズ得点回数",
@@ -131,6 +138,16 @@ def process_team_data(df: pl.DataFrame):
             .round(0)
             .cast(int)
             .alias("3rdダウン成功率")
+        ]
+    )
+
+    #試合平均3rdダウン試行数を計算
+    df_stats = df_stats.with_columns(
+        [
+            (pl.col("3rdダウン試行数") / pl.col("試合回数"))
+            .round(1)
+            .cast(int)
+            .alias("試合平均3rdダウン試行数")
         ]
     )
 
@@ -199,10 +216,20 @@ def process_team_data(df: pl.DataFrame):
         ]
     )
 
-    # "レッドゾーンTD数"と"レッドゾーン攻撃回数"より"レッドゾーンスコア率"を計算して列を追加
+    # "レッドゾーンTD数"と"レッドゾーン攻撃回数"より"レッドゾーンTD率"を計算して列を追加
     df_stats = df_stats.with_columns(
         [
-            ((pl.col("レッドゾーンTD数") / pl.col("レッドゾーン攻撃回数")) * 100)
+            ((pl.col("レッドゾーンTD数") / pl.col("レッドゾーンシリーズ回数")) * 100)
+            .round(0)
+            .cast(int)
+            .alias("レッドゾーンTD率")
+        ]
+    )
+
+    # "レッドゾーンTD数"と"レッドゾーンFG成功数"と"レッドゾーン攻撃回数"より"レッドゾーンスコア率"を計算して列を追加
+    df_stats = df_stats.with_columns(
+        [
+            (((pl.col("レッドゾーンTD数") + pl.col("レッドゾーンFG成功数")) / pl.col("レッドゾーンシリーズ回数")) * 100)
             .round(0)
             .cast(int)
             .alias("レッドゾーンスコア率")

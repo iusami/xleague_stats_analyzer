@@ -187,8 +187,8 @@ def main(pdf_dir: Path, config_path: Path, output_dir: Path, log_level: str):
             logger.info(
                 "%s had %d redzone attempts and %d scores.",
                 stats.team_stats_info.team_name,
-                stats.redzone_info.count,
-                stats.redzone_info.touchdown,
+                stats.redzone_info.play_count,
+                stats.redzone_info.touchdown_count,
             )
             # export_stats_to_json(stats, output_dir / f"{pdf_path.stem}_stats_{ct}.json")
             export_stats_to_csv(stats, output_dir / f"{pdf_path.stem}_stats_{ct}.csv")

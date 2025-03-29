@@ -30,8 +30,10 @@ class TeamPenaltyInfo(BaseModel):
 
 
 class RedzoneInfo(BaseModel):
-    count: int
-    touchdown: int
+    play_count: int
+    fg_score_count: int
+    touchdown_count: int
+    series_count: int
 
 
 class TeamRedzoneInfo(BaseModel):
@@ -144,7 +146,7 @@ class StartingFieldPosition(BaseModel):
         """
         with open(file_path, "w", encoding="utf-8") as f:
             writer = csv.DictWriter(
-                f, fieldnames=["team_name", "field_position", "score"]
+                f, fieldnames=["team_name", "opponent_name", "field_position", "score"]
             )
             writer.writeheader()
             for field_pos in self.field_position:

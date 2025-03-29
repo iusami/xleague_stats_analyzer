@@ -61,12 +61,14 @@ def get_starting_field_position(
                         if "Good" in split_words or "TouchDown" in split_words:
                             field_pos_dict = {
                                 "team_name": team_name_in_file[team_index],
+                                "opponent_name": team_name_in_file[1-team_index],
                                 "field_position": int(field_position),
                                 "score": 1,
                             }
                         else:
                             field_pos_dict = {
                                 "team_name": team_name_in_file[team_index],
+                                "opponent_name": team_name_in_file[1-team_index],
                                 "field_position": int(field_position),
                                 "score": 0,
                             }
