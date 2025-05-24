@@ -12,6 +12,7 @@ from break_team_stats import (
     extract_fg_stats,
     extract_time_possession,
     extract_pr_yards,
+    extract_td_count,
 )
 from break_personal_stats import get_kick_off_return_stat, get_punt_stat
 from models import Stats
@@ -87,6 +88,9 @@ def main(pdf_dir: Path, config_path: Path, output_dir: Path, log_level: str):
         team_starting_field_position = get_starting_field_position(
             pdf_document, team_list_in_file, team_abbreviation_in_file
         )
+        team_td_info = extract_td_count(
+            team_list_in_file, same_line_words_list
+        )
         team_starting_field_position.home_team_starting_field_position.save_as_csv(
             output_dir / f"{pdf_path.stem}_home_field_position.csv"
         )
@@ -109,6 +113,7 @@ def main(pdf_dir: Path, config_path: Path, output_dir: Path, log_level: str):
             fg_stats,
             time_possession,
             pr_info,
+            td_info,
         ) in enumerate(
             [
                 (
@@ -126,6 +131,7 @@ def main(pdf_dir: Path, config_path: Path, output_dir: Path, log_level: str):
                     team_fg_stats.home_fg_info,
                     team_time_possession.home_team_time_possession,
                     team_pr_info.home_team_PRInfo,
+                    team_td_info.home_team_touchdown_info,
                 ),
                 (
                     team_extracted_yards.visitor_team_extracted_yards,
@@ -142,6 +148,7 @@ def main(pdf_dir: Path, config_path: Path, output_dir: Path, log_level: str):
                     team_fg_stats.visitor_fg_info,
                     team_time_possession.visitor_team_time_possession,
                     team_pr_info.visitor_team_PRInfo,
+                    team_td_info.visitor_team_touchdown_info,
                 ),
             ]
         ):
@@ -162,6 +169,8 @@ def main(pdf_dir: Path, config_path: Path, output_dir: Path, log_level: str):
                 fg_stats=fg_stats,
                 time_possession=time_possession,
                 pr_info=pr_info,
+                run_td=td_info.run_touchdown,
+                pass_td=td_info.pass_touchdown,
             )
             logger.info(
                 "%s had %d runs greater than 15 yards.",

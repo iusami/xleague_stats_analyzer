@@ -192,6 +192,13 @@ class TeamPRInfo(BaseModel):
     home_team_PRInfo: PRInfo
     visitor_team_PRInfo: PRInfo
 
+class TouchDownInfo(BaseModel):
+    run_touchdown: int
+    pass_touchdown: int
+
+class TeamTouchDownInfo(BaseModel):
+    home_team_touchdown_info: TouchDownInfo
+    visitor_team_touchdown_info: TouchDownInfo
 
 class Stats(BaseModel):
     team_score: int
@@ -213,6 +220,8 @@ class Stats(BaseModel):
     big_run_count: int = 0
     big_pass_count: int = 0
     third_down_success_rate: int = 0
+    run_td: int = 0
+    pass_td: int = 0
 
     def __init__(self, **data):
         super().__init__(**data)

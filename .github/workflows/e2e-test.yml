@@ -1,0 +1,75 @@
+name: E2E Test
+
+permissions:
+  contents: read
+  actions: write
+
+on:
+  pull_request:
+    branches: [main, update_code]
+    paths:
+      - 'src/**'
+      - 'test/**'
+      - 'config.json'
+      - 'pyproject.toml'
+      - '.github/workflows/e2e-test.yml'
+  push:
+    branches: [main, update_code]
+    paths:
+      - 'src/**'
+      - 'test/**'
+      - 'config.json'
+      - 'pyproject.toml'
+      - '.github/workflows/e2e-test.yml'
+
+jobs:
+  e2e-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+          
+      - name: Set up Python
+        run: uv python install 3.11
+        
+      - name: Install dependencies
+        run: uv sync
+        
+      - name: Verify test data exists
+        run: |
+          echo "Checking test data files..."
+          ls -la test/data/
+          ls -la test/data/result/
+          echo "Test PDFs:"
+          ls -la test/data/*.pdf
+          echo "Expected result files:"
+          ls -la test/data/result/*.csv
+          
+      - name: Run E2E tests
+        run: |
+          echo "Running E2E tests..."
+          uv run pytest test/test_e2e.py -v --tb=short
+          
+      - name: Upload test artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts
+          path: |
+            /tmp/e2e_test_*
+          retention-days: 7
+          
+      - name: Display test summary
+        if: always()
+        run: |
+          echo "E2E Test Summary:"
+          echo "- Pipeline execution test"
+          echo "- Result file generation test" 
+          echo "- Content comparison test"
+          echo "- Configuration usage test"
