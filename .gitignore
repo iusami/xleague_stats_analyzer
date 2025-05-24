@@ -1,5 +1,22 @@
-data
+./data
 .vscode
 .venv
 .ruff_cache
 src/__pycache__
+
+# Coverage reports
+htmlcov/
+.coverage
+coverage.xml
+.pytest_cache/
+
+# Test artifacts
+.tox/
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Coverage badge
+coverage-badge.svg
