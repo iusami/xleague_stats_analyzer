@@ -15,6 +15,8 @@ from models import (
     TeamTimePossession,
     PRInfo,
     TeamPRInfo,
+    TouchDownInfo,
+    TeamTouchDownInfo,
 )
 from logger import logger
 from utils import open_pdf_to_list_only_page
@@ -290,3 +292,45 @@ def extract_pr_yards(same_line_words: list[str]) -> TeamPRInfo:
                 ),
             )
     raise ValueError("PRヤード数が見つかりませんでした。")
+
+
+def extract_td_count(team_name_list: list[str], same_line_words: list[str]) -> TeamTouchDownInfo:
+    def count_touchdowns(team_name: str, td_type: str, line: str, td_counts: dict):
+        """タッチダウンのカウントを更新するヘルパー関数"""
+        if team_name in line and td_type in line:
+            td_counts[team_name][td_type] += 1
+
+    # 初期化
+    current_home_td = 0
+    current_visitor_td = 0
+    td_counts = {
+        team_name_list[0]: {"RUN": 0, "PASS": 0},  # ホームチーム
+        team_name_list[1]: {"RUN": 0, "PASS": 0},  # ビジターチーム
+    }
+
+    # "得点経過"の開始インデックスを取得
+    start_idx = next(
+        (idx for idx, line in enumerate(same_line_words) if "得点経過" in line), None
+    )
+    if start_idx is None:
+        raise ValueError("得点経過が見つかりませんでした。")
+
+    # "得点経過"以降の行を処理
+    for line in same_line_words[start_idx:]:
+        current_home_td = line.split[" "][-2]
+        current_visitor_td = line.split[" "][-1]
+        # for team_name in team_name_list:
+        #     count_touchdowns(team_name, "RUN", line, td_counts)
+        #     count_touchdowns(team_name, "PASS", line, td_counts)
+
+    # 結果を返却
+    return TeamTouchDownInfo(
+        home_team_touchdown_info=TouchDownInfo(
+            run_touchdown=td_counts[team_name_list[0]]["RUN"],
+            pass_touchdown=td_counts[team_name_list[0]]["PASS"],
+        ),
+        visitor_team_touchdown_info=TouchDownInfo(
+            run_touchdown=td_counts[team_name_list[1]]["RUN"],
+            pass_touchdown=td_counts[team_name_list[1]]["PASS"],
+        ),
+    )
