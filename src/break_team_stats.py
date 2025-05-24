@@ -319,9 +319,9 @@ def extract_td_count(team_name_list: list[str], same_line_words: list[str]) -> T
     for line in same_line_words[start_idx:]:
         current_home_td = line.split(" ")[-2]
         current_visitor_td = line.split(" ")[-1]
-        # for team_name in team_name_list:
-        #     count_touchdowns(team_name, "RUN", line, td_counts)
-        #     count_touchdowns(team_name, "PASS", line, td_counts)
+        for team_name in team_name_list:
+            count_touchdowns(team_name, "RUN", line, td_counts)
+            count_touchdowns(team_name, "PASS", line, td_counts)
 
     # 結果を返却
     return TeamTouchDownInfo(
