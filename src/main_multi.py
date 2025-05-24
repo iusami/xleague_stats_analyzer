@@ -88,9 +88,7 @@ def main(pdf_dir: Path, config_path: Path, output_dir: Path, log_level: str):
         team_starting_field_position = get_starting_field_position(
             pdf_document, team_list_in_file, team_abbreviation_in_file
         )
-        team_td_info = extract_td_count(
-            team_list_in_file, same_line_words_list
-        )
+        team_td_info = extract_td_count(team_list_in_file, same_line_words_list)
         team_starting_field_position.home_team_starting_field_position.save_as_csv(
             output_dir / f"{pdf_path.stem}_home_field_position.csv"
         )
