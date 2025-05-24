@@ -1,5 +1,9 @@
 name: E2E Test
 
+permissions:
+  contents: read
+  actions: write
+
 on:
   pull_request:
     branches: [main, update_code]
