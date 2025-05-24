@@ -294,7 +294,9 @@ def extract_pr_yards(same_line_words: list[str]) -> TeamPRInfo:
     raise ValueError("PRヤード数が見つかりませんでした。")
 
 
-def extract_td_count(team_name_list: list[str], same_line_words: list[str]) -> TeamTouchDownInfo:
+def extract_td_count(
+    team_name_list: list[str], same_line_words: list[str]
+) -> TeamTouchDownInfo:
     def count_touchdowns(team_name: str, td_type: str, line: str, td_counts: dict):
         """タッチダウンのカウントを更新するヘルパー関数"""
         if team_name in line and td_type in line:

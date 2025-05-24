@@ -192,13 +192,16 @@ class TeamPRInfo(BaseModel):
     home_team_PRInfo: PRInfo
     visitor_team_PRInfo: PRInfo
 
+
 class TouchDownInfo(BaseModel):
     run_touchdown: int
     pass_touchdown: int
 
+
 class TeamTouchDownInfo(BaseModel):
     home_team_touchdown_info: TouchDownInfo
     visitor_team_touchdown_info: TouchDownInfo
+
 
 class Stats(BaseModel):
     team_score: int

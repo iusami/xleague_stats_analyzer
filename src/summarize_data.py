@@ -141,7 +141,7 @@ def process_team_data(df: pl.DataFrame):
         ]
     )
 
-    #試合平均3rdダウン試行数を計算
+    # 試合平均3rdダウン試行数を計算
     df_stats = df_stats.with_columns(
         [
             (pl.col("3rdダウン試行数") / pl.col("試合回数"))
@@ -229,7 +229,13 @@ def process_team_data(df: pl.DataFrame):
     # "レッドゾーンTD数"と"レッドゾーンFG成功数"と"レッドゾーン攻撃回数"より"レッドゾーンスコア率"を計算して列を追加
     df_stats = df_stats.with_columns(
         [
-            (((pl.col("レッドゾーンTD数") + pl.col("レッドゾーンFG成功数")) / pl.col("レッドゾーンシリーズ回数")) * 100)
+            (
+                (
+                    (pl.col("レッドゾーンTD数") + pl.col("レッドゾーンFG成功数"))
+                    / pl.col("レッドゾーンシリーズ回数")
+                )
+                * 100
+            )
             .round(0)
             .cast(int)
             .alias("レッドゾーンスコア率")
