@@ -301,8 +301,6 @@ def extract_td_count(team_name_list: list[str], same_line_words: list[str]) -> T
             td_counts[team_name][td_type] += 1
 
     # 初期化
-    current_home_td = 0
-    current_visitor_td = 0
     td_counts = {
         team_name_list[0]: {"RUN": 0, "PASS": 0},  # ホームチーム
         team_name_list[1]: {"RUN": 0, "PASS": 0},  # ビジターチーム
@@ -317,8 +315,6 @@ def extract_td_count(team_name_list: list[str], same_line_words: list[str]) -> T
 
     # "得点経過"以降の行を処理
     for line in same_line_words[start_idx:]:
-        current_home_td = line.split(" ")[-2]
-        current_visitor_td = line.split(" ")[-1]
         for team_name in team_name_list:
             count_touchdowns(team_name, "RUN", line, td_counts)
             count_touchdowns(team_name, "PASS", line, td_counts)
