@@ -77,7 +77,6 @@ def main(pdf_path: Path, config_path: Path, log_level: str):
     team_starting_field_position = get_starting_field_position(
         pdf_document, team_list_in_file, team_abbreviation_in_file
     )
-    # team_starting_field_position.save_each_position_as_json("field_position.json")
     team_starting_field_position.home_team_starting_field_position.save_as_json(
         Path("home_field_position.json")
     )

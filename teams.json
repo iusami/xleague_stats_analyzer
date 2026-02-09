@@ -33,15 +33,15 @@
             "abbreviation": "EF"
         },
         {
-            "name":"PLEIADES福岡SUNS",
-            "abbreviation": "PF"
+            "name":"ハカタネクスト福岡SUNS",
+            "abbreviation": "HF"
         },
         {
             "name":"オール三菱ライオンズ",
             "abbreviation":"ML"
         },
         {
-            "name":"オリエンタルバイオシルバースター",
+            "name":"OrientalBioシルバースター",
             "abbreviation":"SS"
         },
         {
@@ -58,9 +58,9 @@
         "SC": "SEKISUIチャレンジャーズ",
         "TG": "東京ガスクリエイターズ",
         "EF": "エレコム神戸ファイニーズ",
-        "PF": "PLEIADES福岡SUNS",
+        "HF": "ハカタネクスト福岡SUNS",
         "ML": "オール三菱ライオンズ",
-        "SS": "オリエンタルバイオシルバースター",
+        "SS": "OrientalBioシルバースター",
         "FM": "富士フイルム海老名Minerva"
     },
     "abbreviation_by_team": {
@@ -72,9 +72,9 @@
         "SEKISUIチャレンジャーズ": "SC",
         "東京ガスクリエイターズ": "TG",
         "エレコム神戸ファイニーズ": "EF",
-        "PLEIADES福岡SUNS": "PF",
+        "ハカタネクスト福岡SUNS": "HF",
         "オール三菱ライオンズ": "ML",
-        "オリエンタルバイオシルバースター": "SS",
+        "OrientalBioシルバースター": "SS",
         "富士フイルム海老名Minerva": "FM"
     }
 }

@@ -135,6 +135,7 @@ def process_team_data(df: pl.DataFrame):
     df_stats = df_stats.with_columns(
         [
             (pl.col("3rdダウン成功数") / pl.col("3rdダウン試行数") * 100)
+            .fill_nan(0)
             .round(0)
             .cast(int)
             .alias("3rdダウン成功率")
@@ -220,6 +221,7 @@ def process_team_data(df: pl.DataFrame):
     df_stats = df_stats.with_columns(
         [
             ((pl.col("レッドゾーンTD数") / pl.col("レッドゾーンシリーズ回数")) * 100)
+            .fill_nan(0)
             .round(0)
             .cast(int)
             .alias("レッドゾーンTD率")
@@ -236,6 +238,7 @@ def process_team_data(df: pl.DataFrame):
                 )
                 * 100
             )
+            .fill_nan(0)
             .round(0)
             .cast(int)
             .alias("レッドゾーンスコア率")
@@ -246,6 +249,7 @@ def process_team_data(df: pl.DataFrame):
     df_stats = df_stats.with_columns(
         [
             ((pl.col("シリーズ得点回数") / pl.col("シリーズ数")) * 100)
+            .fill_nan(0)
             .round(0)
             .cast(int)
             .alias("得点シリーズ率")
@@ -256,6 +260,7 @@ def process_team_data(df: pl.DataFrame):
     df_stats = df_stats.with_columns(
         [
             (pl.col("パス成功数") / pl.col("パス試行数") * 100)
+            .fill_nan(0)
             .round(0)
             .cast(int)
             .alias("パス成功率")
@@ -314,6 +319,7 @@ def process_team_data(df: pl.DataFrame):
     df_stats = df_stats.with_columns(
         [
             (pl.col("キックオフリターン獲得ヤード") / pl.col("キックオフリターン回数"))
+            .fill_nan(0)
             .round(1)
             .cast(int)
             .alias("平均キックオフリターン獲得ヤード")
@@ -324,6 +330,7 @@ def process_team_data(df: pl.DataFrame):
     df_stats = df_stats.with_columns(
         [
             (pl.col("パントリターンヤード") / pl.col("パントリターン回数"))
+            .fill_nan(0)
             .round(1)
             .cast(int)
             .alias("平均パントリターンヤード")
@@ -334,6 +341,7 @@ def process_team_data(df: pl.DataFrame):
     df_stats = df_stats.with_columns(
         [
             (pl.col("パント獲得ヤード") / pl.col("パント回数"))
+            .fill_nan(0)
             .round(1)
             .cast(int)
             .alias("平均パント獲得ヤード")

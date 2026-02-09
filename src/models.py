@@ -157,21 +157,6 @@ class TeamStartingFieldPosition(BaseModel):
     home_team_starting_field_position: StartingFieldPosition
     visitor_team_starting_field_position: StartingFieldPosition
 
-    def save_each_position_as_json(self, file_path: str) -> None:
-        """
-        Saves the starting field position of each team as a JSON file.
-
-        Args:
-            file_path (str): The file path to save the JSON file.
-        """
-        with open(file_path, "w", encoding="utf-8") as f:
-            json.dump(
-                self.model_dump(),
-                f,
-                ensure_ascii=False,
-                indent=4,
-            )
-
 
 class TimePossession(BaseModel):
     minutes: int

@@ -220,15 +220,26 @@ def break_down_team_stats(
 def get_home_visitor_team_name(team_name_list, same_line_words):
     home_team_name = None
     visitor_team_name = None
+    vs_line = None
+    matches = []
     for line in same_line_words:
         if "vs" in line:
+            vs_line = line
             pattern = re.compile("|".join(re.escape(team) for team in team_name_list))
             matches = pattern.findall(line)
             if len(matches) == 2:
                 home_team_name, visitor_team_name = matches
                 break
     if home_team_name is None or visitor_team_name is None:
-        raise ValueError("ホームチーム名またはビジターチーム名が見つかりませんでした。")
+        if vs_line is None:
+            raise ValueError(
+                "ホームチーム名またはビジターチーム名が見つかりませんでした。"
+                " 'vs' を含む行がPDFに存在しません。"
+            )
+        raise ValueError(
+            "ホームチーム名またはビジターチーム名が見つかりませんでした。"
+            f" 対象行: '{vs_line}', マッチしたチーム名: {matches}"
+        )
     return home_team_name, visitor_team_name
 
 
